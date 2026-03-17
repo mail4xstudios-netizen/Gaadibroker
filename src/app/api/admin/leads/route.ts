@@ -1,0 +1,47 @@
+import { NextResponse } from "next/server";
+import { getLeads, updateLeadStatus } from "@/lib/store";
+import { authenticateRequest } from "@/lib/auth";
+import { logger } from "@/lib/logger";
+
+function unauthorized() {
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+}
+
+export async function GET(request: Request) {
+  if (!authenticateRequest(request)) return unauthorized();
+  try {
+    return NextResponse.json(getLeads());
+  } catch (err) {
+    logger.error("Failed to get leads", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  if (!authenticateRequest(request)) return unauthorized();
+
+  let body;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  if (!body.id || !body.status) {
+    return NextResponse.json({ error: "id and status are required" }, { status: 400 });
+  }
+
+  const validStatuses = ["new", "contacted", "converted", "closed"];
+  if (!validStatuses.includes(body.status)) {
+    return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
+  }
+
+  try {
+    const lead = updateLeadStatus(body.id, body.status);
+    if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(lead);
+  } catch (err) {
+    logger.error("Failed to update lead", err);
+    return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
+  }
+}

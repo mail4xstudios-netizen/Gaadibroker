@@ -1,0 +1,9 @@
+node_modules
+.next
+.git
+.github
+.env*
+*.md
+__tests__
+scripts
+docker

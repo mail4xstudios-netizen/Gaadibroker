@@ -1,0 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #ff6a00;
+  --primary-dark: #e55d00;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Button & card utility styles - plain CSS avoids @apply resolution issues */
+.btn-primary {
+  background-color: #ff6a00;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+}
+.btn-primary:hover {
+  background-color: #ea580c;
+}
+.btn-primary:active {
+  transform: scale(0.95);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-outline {
+  border: 2px solid #ff6a00;
+  color: #ff6a00;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  background: transparent;
+  text-decoration: none;
+}
+.btn-outline:hover {
+  background-color: #ff6a00;
+  color: #ffffff;
+}
+
+.card-hover {
+  transition: all 0.3s;
+}
+.card-hover:hover {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: translateY(-4px);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ff6a00;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #e55d00;
+}
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #ff6a00;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255, 106, 0, 0.3);
+}
