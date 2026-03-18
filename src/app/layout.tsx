@@ -3,7 +3,7 @@ import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import { WebsiteSchema, OrganizationSchema } from "@/components/SchemaMarkup";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gaadibroker.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gaadibroker.com/new";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -58,8 +58,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link rel="icon" href="/images/logo-icon.svg" type="image/svg+xml" />
-        <link rel="apple-touch-icon" href="/images/logo-icon.svg" />
+        <link rel="icon" href="/new/images/logo-icon.svg" type="image/svg+xml" />
+        <link rel="apple-touch-icon" href="/new/images/logo-icon.svg" />
         <WebsiteSchema />
         <OrganizationSchema />
       </head>

@@ -149,7 +149,7 @@ export default function AdminBrandsPage() {
                             const fd = new FormData();
                             fd.append("file", file);
                             const token = sessionStorage.getItem("admin_token");
-                            const res = await fetch("/api/admin/upload", {
+                            const res = await fetch("/new/api/admin/upload", {
                               method: "POST",
                               headers: { Authorization: `Bearer ${token || ""}` },
                               body: fd,

@@ -11,7 +11,7 @@ export default function Home() {
   const [brands, setBrands] = useState<Brand[]>(defaultBrands);
 
   useEffect(() => {
-    fetch("/api/brands")
+    fetch("/new/api/brands")
       .then((r) => r.json())
       .then((data) => { if (Array.isArray(data)) setBrands(data); })
       .catch(() => {});

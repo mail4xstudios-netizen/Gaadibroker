@@ -1,6 +1,7 @@
 export function adminFetch(url: string, options: RequestInit = {}): Promise<Response> {
   const token = sessionStorage.getItem("admin_token");
-  return fetch(url, {
+  const prefixedUrl = url.startsWith("/api/") ? `/new${url}` : url;
+  return fetch(prefixedUrl, {
     ...options,
     headers: {
       ...options.headers,

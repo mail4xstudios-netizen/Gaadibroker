@@ -89,7 +89,7 @@ export default function AuthPage() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/user/otp/send", {
+      const res = await fetch("/new/api/user/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -130,7 +130,7 @@ export default function AuthPage() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/user/otp/verify", {
+      const res = await fetch("/new/api/user/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -181,7 +181,7 @@ export default function AuthPage() {
 
     setLoading(true);
     try {
-      const endpoint = tab === "signup" ? "/api/user/signup" : "/api/user/login";
+      const endpoint = tab === "signup" ? "/new/api/user/signup" : "/new/api/user/login";
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -239,7 +239,7 @@ export default function AuthPage() {
           className="text-center mb-8"
         >
           <Link href="/" className="inline-block">
-            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto" />
+            <img src="/new/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto" />
           </Link>
           <p className="text-gray-500 text-sm mt-3">India&apos;s trusted pre-owned car marketplace</p>
         </motion.div>

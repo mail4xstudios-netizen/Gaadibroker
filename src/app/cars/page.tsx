@@ -28,7 +28,7 @@ function CarsPageContent() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    fetch("/api/cars")
+    fetch("/new/api/cars")
       .then((r) => r.json())
       .then((data) => { if (data.length) setCars(data); })
       .catch(() => {});
@@ -101,7 +101,7 @@ function CarsPageContent() {
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-5">
           <nav className="text-sm text-slate-500 mb-3 flex items-center gap-1.5">
-            <a href="/" className="hover:text-orange-500 transition-colors">Home</a>
+            <a href="/new" className="hover:text-orange-500 transition-colors">Home</a>
             <svg className="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
             <span className="text-slate-900 font-medium">Used Cars</span>
             {filters.brand && (

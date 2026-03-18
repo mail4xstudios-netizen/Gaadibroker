@@ -15,7 +15,7 @@ export default function SellPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/leads", {
+    await fetch("/new/api/leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -37,7 +37,7 @@ export default function SellPage() {
           <p className="text-slate-500 mt-2 max-w-md text-sm leading-relaxed">
             Our team will evaluate your {form.brand} {form.model} and contact you within 24 hours with the best offer.
           </p>
-          <a href="/" className="btn-primary inline-block mt-6">Back to Home</a>
+          <a href="/new" className="btn-primary inline-block mt-6">Back to Home</a>
         </div>
       </div>
     );

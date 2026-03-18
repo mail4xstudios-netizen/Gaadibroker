@@ -7,7 +7,7 @@ export function WebsiteSchema() {
     description: "India's most trusted platform for buying and selling pre-owned cars.",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://gaadibroker.com/cars?search={search_term_string}",
+      target: "https://gaadibroker.com/new/cars?search={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
@@ -20,7 +20,7 @@ export function OrganizationSchema() {
     "@type": "Organization",
     name: "GaadiBroker",
     url: "https://gaadibroker.com",
-    logo: "https://gaadibroker.com/logo.png",
+    logo: "https://gaadibroker.com/new/images/logo.png",
     sameAs: [],
     contactPoint: {
       "@type": "ContactPoint",
@@ -101,7 +101,7 @@ export function LocalBusinessSchema({ city }: { city: string }) {
     "@context": "https://schema.org",
     "@type": "AutoDealer",
     name: `GaadiBroker ${city}`,
-    url: `https://gaadibroker.com/cars?city=${encodeURIComponent(city)}`,
+    url: `https://gaadibroker.com/new/cars?city=${encodeURIComponent(city)}`,
     telephone: "+91-98765-43210",
     address: {
       "@type": "PostalAddress",

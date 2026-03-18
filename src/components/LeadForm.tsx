@@ -30,7 +30,7 @@ export default function LeadForm({ carId, carName, source = "detail_page" }: Lea
     setError("");
 
     try {
-      const res = await fetch("/api/leads", {
+      const res = await fetch("/new/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, phone, carId, carName, source }),
