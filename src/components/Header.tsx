@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
   const router = useRouter();
 
   useEffect(() => {
@@ -17,6 +19,10 @@ export default function Header() {
     if (userData) {
       try { setUser(JSON.parse(userData)); } catch { /* ignore */ }
     }
+
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const handleLogout = () => {
@@ -37,63 +43,113 @@ export default function Header() {
     { href: "/contact", label: "Contact" },
   ];
 
+  const isActive = (href: string) => {
+    if (href === "/") return pathname === "/";
+    return pathname.startsWith(href);
+  };
+
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-16 md:h-20">
+    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+      scrolled
+        ? "bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,.08)]"
+        : "bg-white"
+    }`}>
+      {/* Top bar */}
+      <div className="hidden md:block bg-slate-900 text-slate-300">
+        <div className="max-w-7xl mx-auto px-6 flex items-center justify-between h-8 text-xs">
+          <div className="flex items-center gap-4">
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 0 0 2.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 0 1-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 0 0-1.091-.852H4.5A2.25 2.25 0 0 0 2.25 4.5v2.25Z" /></svg>
+              +91 98765 43210
+            </span>
+            <span className="w-px h-3 bg-slate-700" />
+            <span className="flex items-center gap-1.5">
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+              hello@gaadibroker.com
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="flex items-center gap-1 text-emerald-400 font-medium">
+              <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" /></svg>
+              200-Point Inspection
+            </span>
+            <span className="w-px h-3 bg-slate-700" />
+            <span>100+ Cities across India</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Main nav */}
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <div className="flex items-center justify-between h-16 md:h-[68px]">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">G</span>
-            </div>
-            <div>
-              <span className="text-xl md:text-2xl font-bold text-gray-900">
-                Gaadi<span className="text-orange-500">Broker</span>
-              </span>
-            </div>
+          <Link href="/" className="flex items-center group">
+            <img
+              src="/images/logo.png"
+              alt="GaadiBroker"
+              className="h-14 md:h-16 w-auto"
+            />
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="px-4 py-2 text-gray-700 hover:text-orange-500 font-medium transition-colors rounded-lg hover:bg-orange-50"
+                className={`relative px-3.5 py-2 text-[0.8125rem] font-medium transition-colors rounded-lg ${
+                  isActive(link.href)
+                    ? "text-orange-600 bg-orange-50"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                }`}
               >
                 {link.label}
+                {isActive(link.href) && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-0.5 bg-orange-500 rounded-full" />
+                )}
               </Link>
             ))}
           </nav>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Right side */}
+          <div className="hidden md:flex items-center gap-2">
+            <Link
+              href="/sell"
+              className="flex items-center gap-1.5 px-3.5 py-2 text-[0.8125rem] font-semibold text-orange-600 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+              Sell Car
+            </Link>
+
+            <span className="w-px h-6 bg-slate-200" />
+
             {!mounted ? (
-              <Link href="/auth" className="btn-primary text-sm !px-5 !py-2.5">Login / Sign Up</Link>
+              <div className="w-24 h-9 skeleton rounded-lg" />
             ) : user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                 >
-                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-sm">
+                    <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user.name.split(" ")[0]}</span>
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                  <span className="text-sm font-medium text-slate-700 max-w-[80px] truncate">{user.name.split(" ")[0]}</span>
+                  <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${showUserMenu ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
                 </button>
                 {showUserMenu && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-2 z-50">
-                      <div className="px-4 py-2 border-b border-gray-100">
-                        <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                    <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-fade-in-up">
+                      <div className="px-4 py-3 border-b border-slate-100">
+                        <p className="text-sm font-semibold text-slate-900">{user.name}</p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
                       </div>
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-full text-left px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors flex items-center gap-2"
                       >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>
                         Sign Out
                       </button>
                     </div>
@@ -101,10 +157,7 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Link
-                href="/auth"
-                className="btn-primary text-sm !px-5 !py-2.5"
-              >
+              <Link href="/auth" className="btn-primary text-sm !px-5 !py-2">
                 Login / Sign Up
               </Link>
             )}
@@ -113,51 +166,43 @@ export default function Header() {
           {/* Mobile Toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-gray-100"
+            className="md:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
             aria-label="Toggle menu"
           >
-            <div className="w-6 h-5 flex flex-col justify-between">
-              <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 ${
-                  mobileOpen ? "rotate-45 translate-y-2" : ""
-                }`}
-              />
-              <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 ${
-                  mobileOpen ? "opacity-0" : ""
-                }`}
-              />
-              <span
-                className={`h-0.5 w-full bg-gray-700 transition-all duration-300 ${
-                  mobileOpen ? "-rotate-45 -translate-y-2" : ""
-                }`}
-              />
+            <div className="w-5 h-4 flex flex-col justify-between">
+              <span className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 origin-left ${mobileOpen ? "rotate-45 w-[22px]" : ""}`} />
+              <span className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 ${mobileOpen ? "opacity-0 translate-x-2" : ""}`} />
+              <span className={`h-0.5 w-full bg-slate-700 rounded-full transition-all duration-300 origin-left ${mobileOpen ? "-rotate-45 w-[22px]" : ""}`} />
             </div>
           </button>
         </div>
       </div>
 
       {/* Mobile Menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-white border-t">
-          <nav className="px-4 py-3 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 text-gray-700 hover:text-orange-500 hover:bg-orange-50 rounded-lg font-medium"
-              >
-                {link.label}
-              </Link>
-            ))}
+      <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-[500px] border-t border-slate-100" : "max-h-0"}`}>
+        <nav className="px-4 py-3 space-y-0.5 bg-white">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              onClick={() => setMobileOpen(false)}
+              className={`block px-4 py-3 rounded-lg font-medium text-sm transition-colors ${
+                isActive(link.href)
+                  ? "text-orange-600 bg-orange-50"
+                  : "text-slate-700 hover:text-orange-600 hover:bg-orange-50"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <div className="pt-2 mt-2 border-t border-slate-100">
             {user ? (
-              <div className="flex items-center justify-between px-4 py-3 mt-2 bg-gray-50 rounded-lg">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">{user.name.charAt(0).toUpperCase()}</span>
+              <div className="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
                   </div>
-                  <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                  <span className="text-sm font-medium text-slate-700">{user.name}</span>
                 </div>
                 <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="text-sm text-red-600 font-medium">
                   Sign Out
@@ -167,14 +212,14 @@ export default function Header() {
               <Link
                 href="/auth"
                 onClick={() => setMobileOpen(false)}
-                className="block text-center btn-primary mt-3"
+                className="block text-center btn-primary mt-1"
               >
                 Login / Sign Up
               </Link>
             )}
-          </nav>
-        </div>
-      )}
+          </div>
+        </nav>
+      </div>
     </header>
   );
 }

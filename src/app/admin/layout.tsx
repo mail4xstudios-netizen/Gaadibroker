@@ -104,9 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 bg-orange-500 rounded-xl flex items-center justify-center mx-auto mb-3">
-              <span className="text-white text-2xl font-bold">G</span>
-            </div>
+            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
             <p className="text-gray-500 text-sm mt-1">GaadiBroker Dashboard</p>
           </div>
@@ -155,10 +153,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0 transition-transform overflow-y-auto`}>
         <div className="p-6">
-          <Link href="/admin" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">G</span>
-            </div>
+          <Link href="/admin" className="flex items-center gap-3">
+            <img src="/images/logo-icon.svg" alt="GaadiBroker" className="w-8 h-8" />
             <span className="text-lg font-bold text-white">Admin Panel</span>
           </Link>
         </div>

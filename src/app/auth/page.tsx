@@ -238,11 +238,8 @@ export default function AuthPage() {
           transition={{ delay: 0.1 }}
           className="text-center mb-8"
         >
-          <Link href="/" className="inline-flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <span className="text-white text-xl font-bold">G</span>
-            </div>
-            <span className="text-2xl font-bold text-white">GaadiBroker</span>
+          <Link href="/" className="inline-block">
+            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto" />
           </Link>
           <p className="text-gray-500 text-sm mt-3">India&apos;s trusted pre-owned car marketplace</p>
         </motion.div>
