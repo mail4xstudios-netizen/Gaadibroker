@@ -103,6 +103,7 @@ interface SiteContent {
   heroSubtitle: string;
   heroCta: string;
   bannerImage: string;
+  sliderImages: string[];
   aboutText: string;
   contactEmail: string;
   contactPhone: string;
@@ -115,6 +116,7 @@ const defaultContent: SiteContent = {
   heroSubtitle: "India's most trusted platform for buying and selling used cars. Verified sellers, certified vehicles, best deals.",
   heroCta: "Explore Cars",
   bannerImage: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920",
+  sliderImages: [],
   aboutText: "GaadiBroker is India's leading pre-owned car marketplace.",
   contactEmail: "hello@gaadibroker.com",
   contactPhone: "+91 98765 43210",

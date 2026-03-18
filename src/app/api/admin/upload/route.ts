@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
-import { writeFileSync } from "fs";
+import { writeFileSync, mkdirSync, existsSync } from "fs";
 import path from "path";
 
 const ALLOWED_TYPES = ["image/png", "image/svg+xml", "image/jpeg", "image/webp"];
-const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const ALLOWED_FOLDERS = ["brands", "uploads"];
 
 export async function POST(request: Request) {
   if (!authenticateRequest(request)) {
@@ -14,6 +15,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
+    const folder = (formData.get("folder") as string) || "brands";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -28,9 +30,14 @@ export async function POST(request: Request) {
 
     if (file.size > MAX_SIZE) {
       return NextResponse.json(
-        { error: "File size must be under 2MB" },
+        { error: "File size must be under 5MB" },
         { status: 400 }
       );
+    }
+
+    // Validate folder
+    if (!ALLOWED_FOLDERS.includes(folder)) {
+      return NextResponse.json({ error: "Invalid upload folder" }, { status: 400 });
     }
 
     // Sanitize filename
@@ -44,7 +51,13 @@ export async function POST(request: Request) {
     const fileName = `${safeName}-${Date.now()}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const safeDir = path.join(process.cwd(), "public", "brands");
+    const safeDir = path.join(process.cwd(), "public", folder);
+
+    // Ensure directory exists
+    if (!existsSync(safeDir)) {
+      mkdirSync(safeDir, { recursive: true });
+    }
+
     const filePath = path.join(safeDir, fileName);
 
     // Prevent path traversal
@@ -54,7 +67,7 @@ export async function POST(request: Request) {
 
     writeFileSync(filePath, buffer);
 
-    return NextResponse.json({ url: `/brands/${fileName}` }, { status: 201 });
+    return NextResponse.json({ url: `/${folder}/${fileName}` }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }

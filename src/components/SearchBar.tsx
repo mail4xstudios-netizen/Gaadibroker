@@ -60,12 +60,13 @@ export default function SearchBar() {
           </select>
         </div>
 
-        <div className="flex items-end">
+        <div>
+          <label className="block text-[0.6875rem] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">&nbsp;</label>
           <button
             onClick={handleSearch}
-            className="w-full btn-primary rounded-xl flex items-center justify-center gap-2 !py-3.5 text-sm"
+            className="w-full btn-primary rounded-xl !flex !flex-row !items-center !justify-center gap-2 !py-3.5 text-sm whitespace-nowrap"
           >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+            <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             Search Cars
