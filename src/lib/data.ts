@@ -40,6 +40,27 @@ export interface Brand {
   logo: string;
 }
 
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  passwordHash?: string;
+  passwordSalt?: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+  role: "user" | "seller" | "admin";
+  avatar?: string;
+  city?: string;
+  blocked: boolean;
+  lastLoginAt?: string;
+  lastLoginIp?: string;
+  lastLoginDevice?: string;
+  loginCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export const brands: Brand[] = [
   { id: "1", name: "Maruti Suzuki", slug: "maruti", logo: "/brands/maruti.svg" },
   { id: "2", name: "Hyundai", slug: "hyundai", logo: "/brands/hyundai.svg" },

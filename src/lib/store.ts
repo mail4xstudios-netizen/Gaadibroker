@@ -1,4 +1,4 @@
-import { Car, Lead, Brand, sampleCars, brands as defaultBrands } from "./data";
+import { Car, Lead, Brand, User, sampleCars, brands as defaultBrands } from "./data";
 import fs from "fs";
 import path from "path";
 import { logger } from "./logger";
@@ -159,5 +159,46 @@ export function deleteBrand(id: string): boolean {
   const filtered = brands.filter((b) => b.id !== id);
   if (filtered.length === brands.length) return false;
   writeJson("brands.json", filtered);
+  return true;
+}
+
+// ─── User CRUD ───
+export function getUsers(): User[] {
+  return readJson<User[]>("users.json", []);
+}
+
+export function getUserById(id: string): User | undefined {
+  return getUsers().find((u) => u.id === id);
+}
+
+export function getUserByEmail(email: string): User | undefined {
+  return getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
+}
+
+export function getUserByPhone(phone: string): User | undefined {
+  return getUsers().find((u) => u.phone === phone);
+}
+
+export function addUser(user: User): User {
+  const users = getUsers();
+  users.push(user);
+  writeJson("users.json", users);
+  return user;
+}
+
+export function updateUser(id: string, updates: Partial<User>): User | null {
+  const users = getUsers();
+  const index = users.findIndex((u) => u.id === id);
+  if (index === -1) return null;
+  users[index] = { ...users[index], ...updates, updatedAt: new Date().toISOString() };
+  writeJson("users.json", users);
+  return users[index];
+}
+
+export function deleteUser(id: string): boolean {
+  const users = getUsers();
+  const filtered = users.filter((u) => u.id !== id);
+  if (filtered.length === users.length) return false;
+  writeJson("users.json", filtered);
   return true;
 }
