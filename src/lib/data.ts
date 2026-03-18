@@ -61,6 +61,25 @@ export interface User {
   updatedAt: string;
 }
 
+export interface SellLead {
+  id: string;
+  userId: string;
+  userName: string;
+  userPhone: string;
+  userEmail: string;
+  brand: string;
+  model: string;
+  year: string;
+  kmDriven: string;
+  fuelType: string;
+  city: string;
+  expectedPrice: string;
+  images: string[];
+  status: "new" | "contacted" | "inspecting" | "offer_made" | "sold" | "rejected";
+  adminNotes: string;
+  createdAt: string;
+}
+
 export const brands: Brand[] = [
   { id: "1", name: "Maruti Suzuki", slug: "maruti", logo: "/new/brands/maruti.svg" },
   { id: "2", name: "Hyundai", slug: "hyundai", logo: "/new/brands/hyundai.svg" },

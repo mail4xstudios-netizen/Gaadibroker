@@ -1,4 +1,4 @@
-import { Car, Lead, Brand, User, sampleCars, brands as defaultBrands } from "./data";
+import { Car, Lead, Brand, User, SellLead, sampleCars, brands as defaultBrands } from "./data";
 import fs from "fs";
 import path from "path";
 import { logger } from "./logger";
@@ -218,4 +218,25 @@ export function deleteUser(id: string): boolean {
   if (filtered.length === users.length) return false;
   writeJson("users.json", filtered);
   return true;
+}
+
+// ─── Sell Leads CRUD ───
+export function getSellLeads(): SellLead[] {
+  return readJson<SellLead[]>("sell-leads.json", []);
+}
+
+export function addSellLead(lead: SellLead): SellLead {
+  const leads = getSellLeads();
+  leads.push(lead);
+  writeJson("sell-leads.json", leads);
+  return lead;
+}
+
+export function updateSellLead(id: string, updates: Partial<SellLead>): SellLead | null {
+  const leads = getSellLeads();
+  const index = leads.findIndex((l) => l.id === id);
+  if (index === -1) return null;
+  leads[index] = { ...leads[index], ...updates };
+  writeJson("sell-leads.json", leads);
+  return leads[index];
 }

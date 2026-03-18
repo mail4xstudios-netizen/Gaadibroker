@@ -1,30 +1,109 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { brands } from "@/lib/data";
 
 export default function SellPage() {
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({
     brand: "", model: "", year: "", kmDriven: "", fuelType: "",
-    city: "", name: "", phone: "", expectedPrice: "",
+    city: "", expectedPrice: "",
   });
+  const [images, setImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [userData, setUserData] = useState<{ name: string; phone: string; email: string; id: string } | null>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem("user_token");
+    const data = sessionStorage.getItem("user_data");
+    if (token && data) {
+      setIsLoggedIn(true);
+      try { setUserData(JSON.parse(data)); } catch { /* ignore */ }
+    }
+  }, []);
 
   const update = (key: string, value: string) => setForm({ ...form, [key]: value });
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    if (images.length + files.length > 10) {
+      alert("Maximum 10 images allowed");
+      return;
+    }
+
+    setUploading(true);
+    for (const file of Array.from(files)) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const res = await fetch("/new/api/sell-leads/upload", { method: "POST", body: formData });
+        const data = await res.json();
+        if (data.url) {
+          setImages((prev) => [...prev, data.url]);
+        }
+      } catch { /* ignore failed uploads */ }
+    }
+    setUploading(false);
+    if (fileRef.current) fileRef.current.value = "";
+  };
+
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/new/api/leads", {
+    if (!isLoggedIn) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    if (images.length === 0) {
+      alert("Please upload at least one car image");
+      return;
+    }
+
+    await fetch("/new/api/sell-leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        name: form.name, phone: form.phone, carId: "sell-inquiry",
-        carName: `${form.brand} ${form.model} ${form.year}`, source: "sell_page",
+        userId: userData?.id || "",
+        userName: userData?.name || "",
+        userPhone: userData?.phone || "",
+        userEmail: userData?.email || "",
+        brand: form.brand,
+        model: form.model,
+        year: form.year,
+        kmDriven: form.kmDriven,
+        fuelType: form.fuelType,
+        city: form.city,
+        expectedPrice: form.expectedPrice,
+        images,
       }),
     });
     setSubmitted(true);
   };
+
+  // Login prompt modal
+  if (showLoginPrompt) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center px-4 bg-slate-50">
+        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+            <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+          </div>
+          <h2 className="text-xl font-extrabold text-slate-900 mb-2">Login Required</h2>
+          <p className="text-slate-500 text-sm mb-6">You need to be logged in to sell your car. This helps us verify your identity and contact you with offers.</p>
+          <a href="/new/auth" className="btn-primary inline-block w-full mb-3">Login / Sign Up</a>
+          <button onClick={() => setShowLoginPrompt(false)} className="text-slate-500 text-sm hover:text-slate-700">Go Back</button>
+        </div>
+      </div>
+    );
+  }
 
   if (submitted) {
     return (
@@ -45,8 +124,9 @@ export default function SellPage() {
 
   const steps = [
     { num: 1, label: "Car Details" },
-    { num: 2, label: "More Info" },
-    { num: 3, label: "Contact" },
+    { num: 2, label: "Photos" },
+    { num: 3, label: "More Info" },
+    { num: 4, label: "Review" },
   ];
 
   return (
@@ -59,13 +139,19 @@ export default function SellPage() {
         </div>
         <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-14 md:py-20 text-center">
           <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Sell Your Car</h1>
-          <p className="text-white/80 mt-3 text-base md:text-lg">Get the best price in just 3 easy steps</p>
+          <p className="text-white/80 mt-3 text-base md:text-lg">Get the best price in just 4 easy steps</p>
+          {!isLoggedIn && (
+            <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
+              Login required to submit
+            </div>
+          )}
         </div>
       </section>
 
       <div className="max-w-xl mx-auto px-4 md:px-6 py-10">
         {/* Step indicator */}
-        <div className="flex items-center justify-between mb-10 px-4">
+        <div className="flex items-center justify-between mb-10 px-2">
           {steps.map((s, i) => (
             <div key={s.num} className="flex items-center">
               <div className="flex flex-col items-center">
@@ -76,9 +162,9 @@ export default function SellPage() {
                 }`}>{step > s.num ? (
                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" /></svg>
                 ) : s.num}</div>
-                <span className={`text-[0.6875rem] font-medium mt-1.5 ${step >= s.num ? "text-orange-600" : "text-slate-400"}`}>{s.label}</span>
+                <span className={`text-[0.6rem] font-medium mt-1.5 ${step >= s.num ? "text-orange-600" : "text-slate-400"}`}>{s.label}</span>
               </div>
-              {i < 2 && <div className={`w-16 md:w-24 h-0.5 mx-2 mb-5 rounded-full transition-colors ${step > s.num ? "bg-orange-500" : "bg-slate-200"}`} />}
+              {i < 3 && <div className={`w-10 md:w-16 h-0.5 mx-1.5 mb-5 rounded-full transition-colors ${step > s.num ? "bg-orange-500" : "bg-slate-200"}`} />}
             </div>
           ))}
         </div>
@@ -121,6 +207,49 @@ export default function SellPage() {
 
             {step === 2 && (
               <div className="space-y-4">
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Upload Car Photos</h2>
+                <p className="text-sm text-slate-500 mb-5">Add at least 1 photo (max 10). Clear photos help get better offers.</p>
+
+                {/* Image grid */}
+                <div className="grid grid-cols-3 gap-3">
+                  {images.map((img, i) => (
+                    <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 group">
+                      <img src={img} alt={`Car ${i + 1}`} className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => removeImage(i)}
+                        className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  {images.length < 10 && (
+                    <label className="aspect-square rounded-lg border-2 border-dashed border-slate-300 hover:border-orange-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-slate-50 hover:bg-orange-50">
+                      {uploading ? (
+                        <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" /></svg>
+                          <span className="text-xs text-slate-500 mt-1">Add Photo</span>
+                        </>
+                      )}
+                      <input ref={fileRef} type="file" accept="image/png,image/jpeg,image/webp" multiple className="hidden" onChange={handleImageUpload} />
+                    </label>
+                  )}
+                </div>
+
+                <p className="text-xs text-slate-400">{images.length}/10 photos uploaded</p>
+
+                <div className="flex gap-3 mt-2">
+                  <button type="button" onClick={() => setStep(1)} className="flex-1 btn-outline !py-3">Back</button>
+                  <button type="button" onClick={() => setStep(3)} disabled={images.length === 0}
+                    className="flex-1 btn-primary disabled:opacity-50 !py-3">
+                    Continue
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === 3 && (
+              <div className="space-y-4">
                 <h2 className="text-lg font-bold text-slate-900 mb-1">Additional Details</h2>
                 <p className="text-sm text-slate-500 mb-5">Help us evaluate your car better</p>
                 <div>
@@ -148,38 +277,52 @@ export default function SellPage() {
                     onChange={(e) => update("expectedPrice", e.target.value)} className="input-premium" />
                 </div>
                 <div className="flex gap-3 mt-2">
-                  <button type="button" onClick={() => setStep(1)} className="flex-1 btn-outline !py-3">Back</button>
-                  <button type="button" onClick={() => setStep(3)} disabled={!form.kmDriven || !form.fuelType || !form.city}
+                  <button type="button" onClick={() => setStep(2)} className="flex-1 btn-outline !py-3">Back</button>
+                  <button type="button" onClick={() => setStep(4)} disabled={!form.kmDriven || !form.fuelType || !form.city}
                     className="flex-1 btn-primary disabled:opacity-50 !py-3">Continue</button>
                 </div>
               </div>
             )}
 
-            {step === 3 && (
+            {step === 4 && (
               <div className="space-y-4">
-                <h2 className="text-lg font-bold text-slate-900 mb-1">Contact Details</h2>
-                <p className="text-sm text-slate-500 mb-5">So we can reach you with the best offer</p>
-                <div>
-                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Your Name</label>
-                  <input type="text" required placeholder="Full Name" value={form.name}
-                    onChange={(e) => update("name", e.target.value)} className="input-premium" />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">Phone Number</label>
-                  <input type="tel" required placeholder="10-digit mobile number" value={form.phone}
-                    onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} className="input-premium" />
-                </div>
+                <h2 className="text-lg font-bold text-slate-900 mb-1">Review & Submit</h2>
+                <p className="text-sm text-slate-500 mb-5">Check your details before submitting</p>
 
-                {/* Summary */}
-                <div className="bg-slate-50 rounded-lg p-4 mt-2">
+                {/* Car summary */}
+                <div className="bg-slate-50 rounded-lg p-4">
                   <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Your Car</p>
                   <p className="font-bold text-slate-900 text-sm">{form.brand} {form.model} ({form.year})</p>
-                  <p className="text-xs text-slate-500 mt-1">{form.fuelType} &middot; {Number(form.kmDriven).toLocaleString()} km &middot; {form.city}</p>
+                  <p className="text-xs text-slate-500 mt-1">{form.fuelType} · {Number(form.kmDriven).toLocaleString()} km · {form.city}</p>
+                  {form.expectedPrice && <p className="text-xs text-orange-600 font-semibold mt-1">Expected: ₹{Number(form.expectedPrice).toLocaleString()}</p>}
                 </div>
 
+                {/* Image thumbnails */}
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {images.map((img, i) => (
+                    <img key={i} src={img} alt={`Car ${i + 1}`} className="w-16 h-16 rounded-lg object-cover flex-shrink-0 border border-slate-200" />
+                  ))}
+                </div>
+
+                {/* User info */}
+                {isLoggedIn && userData && (
+                  <div className="bg-emerald-50 rounded-lg p-4">
+                    <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-2">Your Contact</p>
+                    <p className="font-bold text-slate-900 text-sm">{userData.name}</p>
+                    <p className="text-xs text-slate-500 mt-1">{userData.phone} · {userData.email}</p>
+                  </div>
+                )}
+
+                {!isLoggedIn && (
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+                    <p className="text-amber-800 text-sm font-medium">You must be logged in to submit</p>
+                    <a href="/new/auth" className="text-orange-600 text-sm font-bold underline mt-1 inline-block">Login / Sign Up</a>
+                  </div>
+                )}
+
                 <div className="flex gap-3 mt-2">
-                  <button type="button" onClick={() => setStep(2)} className="flex-1 btn-outline !py-3">Back</button>
-                  <button type="submit" className="flex-1 btn-primary !py-3">Submit Request</button>
+                  <button type="button" onClick={() => setStep(3)} className="flex-1 btn-outline !py-3">Back</button>
+                  <button type="submit" disabled={!isLoggedIn} className="flex-1 btn-primary disabled:opacity-50 !py-3">Submit Request</button>
                 </div>
               </div>
             )}
@@ -197,9 +340,9 @@ export default function SellPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>,
-                title: "Share Car Details",
-                desc: "Fill in your car's details and get an instant estimate",
+                icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" /><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" /></svg>,
+                title: "Upload Photos & Details",
+                desc: "Share your car details and upload clear photos",
               },
               {
                 icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>,
