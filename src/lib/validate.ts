@@ -17,7 +17,7 @@ export function isValidPhone(phone: string): boolean {
 
 // Validate email
 export function isValidEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+  return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email) && email.length <= 254;
 }
 
 // Validate that required fields exist and are non-empty strings

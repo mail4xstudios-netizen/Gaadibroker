@@ -44,7 +44,14 @@ export async function POST(request: Request) {
     const fileName = `${safeName}-${Date.now()}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filePath = path.join(process.cwd(), "public", "brands", fileName);
+    const safeDir = path.join(process.cwd(), "public", "brands");
+    const filePath = path.join(safeDir, fileName);
+
+    // Prevent path traversal
+    if (!filePath.startsWith(safeDir)) {
+      return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
+    }
+
     writeFileSync(filePath, buffer);
 
     return NextResponse.json({ url: `/brands/${fileName}` }, { status: 201 });

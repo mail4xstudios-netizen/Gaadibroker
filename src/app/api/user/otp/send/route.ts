@@ -60,14 +60,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: result.error }, { status: 429 });
   }
 
-  // In production, send OTP via email/SMS service (Twilio, SendGrid, etc.)
-  // For now, log it and return success
-  logger.info(`OTP sent to ${identifier}: ${result.code}`);
+  // In production, integrate email/SMS service (Resend, SendGrid, Twilio)
+  // OTP is logged to server console only in dev mode for testing
+  if (process.env.NODE_ENV === "development") {
+    logger.info(`[DEV] OTP for ${identifier}: ${result.code}`);
+  } else {
+    logger.info(`OTP generated for ${identifier}`);
+  }
 
   return NextResponse.json({
     success: true,
     message: `OTP sent to ${email ? "your email" : "your phone"}`,
-    // Include OTP in dev mode for testing (REMOVE in production)
-    ...(process.env.NODE_ENV === "development" ? { otp: result.code } : {}),
   });
 }

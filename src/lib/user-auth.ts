@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { logger } from "./logger";
 
-const AUTH_SECRET = process.env.AUTH_SECRET || "default-secret-change-me";
+const AUTH_SECRET = process.env.AUTH_SECRET!;
 
 // ─── Password Hashing ───
 export function hashUserPassword(password: string): { hash: string; salt: string } {
@@ -129,7 +129,7 @@ export function generateOTP(identifier: string, ip?: string): { code: string; er
     verified: false,
   });
 
-  logger.info(`OTP generated for ${identifier}: ${code}`);
+  logger.info(`OTP generated for ${identifier}`);
   return { code };
 }
 

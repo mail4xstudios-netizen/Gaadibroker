@@ -8,9 +8,11 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
     const userData = sessionStorage.getItem("user_data");
     if (userData) {
       try { setUser(JSON.parse(userData)); } catch { /* ignore */ }
@@ -66,7 +68,9 @@ export default function Header() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            {user ? (
+            {!mounted ? (
+              <Link href="/auth" className="btn-primary text-sm !px-5 !py-2.5">Login / Sign Up</Link>
+            ) : user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}

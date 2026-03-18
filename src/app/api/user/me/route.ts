@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getUserById, updateUser } from "@/lib/store";
 import { extractUserFromRequest, hashUserPassword } from "@/lib/user-auth";
 import { sanitize, isValidPhone } from "@/lib/validate";
+import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
@@ -33,6 +34,11 @@ export async function PUT(request: Request) {
   const auth = extractUserFromRequest(request);
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { success: rlOk } = rateLimit(`profile:${auth.userId}`, { limit: 10, windowMs: 60_000 });
+  if (!rlOk) {
+    return NextResponse.json({ error: "Too many updates. Try again later." }, { status: 429 });
   }
 
   let body;
