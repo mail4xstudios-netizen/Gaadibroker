@@ -21,16 +21,18 @@ export function middleware(request: NextRequest) {
   if (!isDev) {
     response.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' wss:; frame-ancestors 'none';"
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https: wss:; frame-ancestors 'none';"
     );
   }
 
   // ─── CORS for API routes ───
   if (pathname.startsWith("/api/")) {
     const origin = request.headers.get("origin") || "";
-    const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:3000").split(",");
+    const host = request.headers.get("host") || "";
+    const allowedOrigins = (process.env.ALLOWED_ORIGINS || "http://localhost:3000,http://localhost:3002,https://*.vercel.app").split(",");
 
-    if (allowedOrigins.includes(origin) || allowedOrigins.includes("*")) {
+    // Allow same-origin requests and Vercel deployments
+    if (allowedOrigins.includes(origin) || allowedOrigins.includes("*") || origin.includes(host) || origin.endsWith(".vercel.app")) {
       response.headers.set("Access-Control-Allow-Origin", origin);
     }
     response.headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
