@@ -3,16 +3,31 @@ import fs from "fs";
 import path from "path";
 import { logger } from "./logger";
 
-const DATA_DIR = path.join(process.cwd(), "src/data");
+// On Vercel, the filesystem is read-only except /tmp
+const isVercel = !!process.env.VERCEL;
+const DATA_DIR = isVercel
+  ? path.join("/tmp", "gaadibroker-data")
+  : path.join(process.cwd(), "src/data");
+const SOURCE_DATA_DIR = path.join(process.cwd(), "src/data");
 
 function ensureDataDir() {
   try {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
+    // On Vercel, copy source data files to /tmp if they don't exist yet
+    if (isVercel && fs.existsSync(SOURCE_DATA_DIR)) {
+      const files = fs.readdirSync(SOURCE_DATA_DIR);
+      for (const file of files) {
+        const dest = path.join(DATA_DIR, file);
+        if (!fs.existsSync(dest)) {
+          const src = path.join(SOURCE_DATA_DIR, file);
+          fs.copyFileSync(src, dest);
+        }
+      }
+    }
   } catch (err) {
     logger.error("Failed to create data directory", err);
-    throw new Error("Data directory unavailable");
   }
 }
 
