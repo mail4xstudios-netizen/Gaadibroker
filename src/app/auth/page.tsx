@@ -239,7 +239,7 @@ export default function AuthPage() {
           className="text-center mb-8"
         >
           <Link href="/" className="inline-block">
-            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto" />
+            <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-18 w-auto mx-auto" />
           </Link>
           <p className="text-gray-500 text-sm mt-3">India&apos;s trusted pre-owned car marketplace</p>
         </motion.div>

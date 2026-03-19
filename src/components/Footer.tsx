@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-1 lg:col-span-4">
             <Link href="/" className="inline-block mb-4 md:mb-5">
               <img
-                src="/images/logo.png"
+                src="/images/logo-v2.png"
                 alt="GaadiBroker"
                 className="h-5 md:h-9 w-auto"
               />

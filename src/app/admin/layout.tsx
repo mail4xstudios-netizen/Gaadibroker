@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-6">
-            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto mb-3" />
+            <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-18 w-auto mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
             <p className="text-gray-500 text-sm mt-1">GaadiBroker Dashboard</p>
           </div>

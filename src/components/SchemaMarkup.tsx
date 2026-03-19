@@ -20,7 +20,7 @@ export function OrganizationSchema() {
     "@type": "Organization",
     name: "GaadiBroker",
     url: "https://gaadibroker.com",
-    logo: "https://gaadibroker.com/images/logo.png",
+    logo: "https://gaadibroker.com/images/logo-v2.png",
     sameAs: [],
     contactPoint: {
       "@type": "ContactPoint",
