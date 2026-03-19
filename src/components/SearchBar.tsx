@@ -18,16 +18,16 @@ export default function SearchBar() {
     router.push(`/cars?${params.toString()}`);
   };
 
-  const selectClass = "w-full px-4 py-3.5 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm font-medium focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all appearance-none cursor-pointer";
+  const selectClass = "w-full px-3 md:px-4 py-3 md:py-3.5 bg-white border border-slate-200 rounded-xl text-slate-700 text-sm font-medium focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 transition-all appearance-none cursor-pointer";
 
   return (
-    <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,.12)] p-5 md:p-6 max-w-4xl border border-white/50">
-      <div className="flex items-center gap-2 mb-4">
-        <svg className="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+    <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,.12)] p-4 md:p-6 max-w-4xl border border-white/50">
+      <div className="flex items-center gap-2 mb-3 md:mb-4">
+        <svg className="w-4 h-4 md:w-5 md:h-5 text-orange-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
         <h3 className="text-sm font-bold text-slate-800 tracking-tight">Find Your Perfect Car</h3>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5 md:gap-3">
         <div className="relative">
           <label className="block text-[0.6875rem] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">Brand</label>
           <select value={brand} onChange={(e) => setBrand(e.target.value)} className={selectClass}>
@@ -60,11 +60,11 @@ export default function SearchBar() {
           </select>
         </div>
 
-        <div>
-          <label className="block text-[0.6875rem] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">&nbsp;</label>
+        <div className="col-span-2 md:col-span-1">
+          <label className="hidden md:block text-[0.6875rem] font-semibold text-slate-500 uppercase tracking-wider mb-1.5">&nbsp;</label>
           <button
             onClick={handleSearch}
-            className="w-full btn-primary rounded-xl flex items-center justify-center gap-2 !py-3.5 text-sm"
+            className="w-full btn-primary rounded-xl flex items-center justify-center gap-2 !py-3 md:!py-3.5 text-sm"
           >
             <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -75,7 +75,7 @@ export default function SearchBar() {
       </div>
 
       {/* Quick filter chips */}
-      <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
+      <div className="hidden sm:flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
         <span className="text-xs text-slate-400 font-medium py-1">Popular:</span>
         {["Under 5 Lakh", "SUV", "Automatic", "Diesel", "First Owner"].map((tag) => (
           <button

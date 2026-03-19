@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -265,4 +265,43 @@ input[type="range"]::-webkit-slider-thumb {
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+}
+
+/* ───── Mobile optimizations ───── */
+@media (max-width: 640px) {
+  .section-title {
+    font-size: 1.375rem;
+  }
+  .section-subtitle {
+    font-size: 0.875rem;
+  }
+  .btn-primary, .btn-outline {
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Touch-friendly tap targets */
+@media (pointer: coarse) {
+  button, a, select, input {
+    min-height: 44px;
+  }
+}
+
+/* Reduce animations on mobile for performance */
+@media (prefers-reduced-motion: reduce), (max-width: 640px) {
+  .card-hover:hover, .card-premium:hover {
+    transform: none;
+  }
+  .animate-fade-in-up {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* GPU acceleration for smooth scrolling */
+.backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-xl {
+  will-change: transform;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }

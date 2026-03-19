@@ -81,13 +81,13 @@ export default function Header() {
 
       {/* Main nav */}
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <div className="flex items-center justify-between h-16 md:h-[68px]">
+        <div className="flex items-center justify-between h-14 md:h-[68px]">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
               src="/images/logo.png"
               alt="GaadiBroker"
-              className="h-14 md:h-16 w-auto"
+              className="h-10 md:h-16 w-auto"
             />
           </Link>
 

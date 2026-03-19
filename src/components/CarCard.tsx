@@ -8,7 +8,7 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
     <Link href={`/cars/${car.id}`} className="block group">
       <div className="bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,.08)] hover:-translate-y-1">
         {/* Image */}
-        <div className="relative h-48 md:h-52 overflow-hidden bg-slate-100">
+        <div className="relative h-40 md:h-52 overflow-hidden bg-slate-100">
           {car.images[0] ? (
             <img
               src={car.images[0]}

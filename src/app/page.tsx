@@ -20,46 +20,48 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative min-h-[600px] md:min-h-[680px] flex items-center overflow-hidden">
+      <section className="relative min-h-[480px] md:min-h-[680px] flex items-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920"
+            src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=75"
             alt="Premium car"
             className="w-full h-full object-cover"
+            loading="eager"
+            fetchPriority="high"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/95 via-slate-900/80 to-slate-900/40" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-20 w-full">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20 w-full">
           <div className="max-w-2xl">
-            <div className="flex items-center gap-2 mb-5">
-              <span className="inline-flex items-center gap-1.5 bg-orange-500/15 text-orange-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-orange-500/20 backdrop-blur-sm">
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" /></svg>
+            <div className="flex items-center gap-2 mb-3 md:mb-5">
+              <span className="inline-flex items-center gap-1.5 bg-orange-500/15 text-orange-300 text-[0.6875rem] md:text-xs font-semibold px-2.5 py-1 md:px-3 md:py-1.5 rounded-full border border-orange-500/20 backdrop-blur-sm">
+                <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="currentColor" viewBox="0 0 24 24"><path fillRule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clipRule="evenodd" /></svg>
                 India&apos;s Trusted Pre-Owned Car Platform
               </span>
             </div>
-            <h1 className="text-4xl md:text-[3.5rem] font-extrabold text-white leading-[1.1] tracking-tight">
+            <h1 className="text-2xl md:text-[3.5rem] font-extrabold text-white leading-[1.15] tracking-tight">
               Find Your Dream{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500">Pre-Owned</span> Car
             </h1>
-            <p className="text-base md:text-lg text-slate-300 mt-5 max-w-xl leading-relaxed">
-              Explore thousands of verified, inspection-certified used cars with transparent pricing. No hidden charges, no surprises.
+            <p className="text-sm md:text-lg text-slate-300 mt-3 md:mt-5 max-w-xl leading-relaxed">
+              Explore thousands of verified, inspection-certified used cars with transparent pricing.
             </p>
-            <div className="flex flex-wrap gap-3 mt-7">
-              <Link href="/cars" className="btn-primary text-base !px-7 !py-3.5">
+            <div className="flex flex-wrap gap-2.5 md:gap-3 mt-5 md:mt-7">
+              <Link href="/cars" className="btn-primary text-sm md:text-base !px-5 md:!px-7 !py-3 md:!py-3.5">
                 Explore Cars
               </Link>
               <Link
                 href="/sell"
-                className="border border-white/30 text-white font-semibold px-7 py-3.5 rounded-lg hover:bg-white hover:text-slate-900 transition-all duration-300 inline-block text-base backdrop-blur-sm"
+                className="border border-white/30 text-white font-semibold px-5 md:px-7 py-3 md:py-3.5 rounded-lg hover:bg-white hover:text-slate-900 transition-all duration-300 inline-block text-sm md:text-base backdrop-blur-sm"
               >
                 Sell Your Car
               </Link>
             </div>
 
-            {/* Trust indicators */}
-            <div className="flex flex-wrap items-center gap-5 mt-8">
+            {/* Trust indicators - hidden on small mobile */}
+            <div className="hidden sm:flex flex-wrap items-center gap-5 mt-8">
               {[
                 { icon: "shield", text: "200-Point Inspection" },
                 { icon: "document", text: "Free RC Transfer" },
@@ -73,7 +75,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="mt-10">
+          <div className="mt-6 md:mt-10">
             <SearchBar />
           </div>
         </div>
@@ -81,8 +83,8 @@ export default function Home() {
 
       {/* Stats Bar */}
       <section className="bg-white border-b border-slate-100">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             {[
               { value: "10,000+", label: "Cars Listed", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg> },
               { value: "50,000+", label: "Happy Customers", icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg> },
@@ -94,7 +96,7 @@ export default function Home() {
                   {stat.icon}
                 </div>
                 <div>
-                  <p className="text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">{stat.value}</p>
+                  <p className="text-lg md:text-2xl font-extrabold text-slate-900 tracking-tight">{stat.value}</p>
                   <p className="text-xs text-slate-500 font-medium">{stat.label}</p>
                 </div>
               </div>
@@ -104,8 +106,8 @@ export default function Home() {
       </section>
 
       {/* Featured Cars */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-14 md:py-20">
-        <div className="flex items-end justify-between mb-8">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20">
+        <div className="flex items-end justify-between mb-6 md:mb-8">
           <div>
             <h2 className="section-title">Featured Cars</h2>
             <p className="section-subtitle">Handpicked vehicles just for you</p>
@@ -133,7 +135,7 @@ export default function Home() {
       </section>
 
       {/* Browse by Budget */}
-      <section className="bg-slate-50 py-14 md:py-20">
+      <section className="bg-slate-50 py-10 md:py-20">
         <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="text-center mb-10">
             <h2 className="section-title">Browse by Budget</h2>
@@ -166,18 +168,18 @@ export default function Home() {
       </section>
 
       {/* Browse by Brand */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-14 md:py-20">
-        <div className="text-center mb-10">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20">
+        <div className="text-center mb-6 md:mb-10">
           <h2 className="section-title">Browse by Brand</h2>
           <p className="section-subtitle">Explore popular car manufacturers</p>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
           {brands.map((brand) => (
             <Link
               key={brand.slug}
               href={`/cars?brand=${encodeURIComponent(brand.name)}`}
-              className="group block bg-white rounded-xl p-5 text-center border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all duration-300"
+              className="group block bg-white rounded-xl p-3 md:p-5 text-center border border-slate-100 hover:border-orange-200 hover:shadow-md transition-all duration-300"
             >
               <BrandLogo brand={brand} />
               <p className="font-semibold text-slate-800 text-sm mt-3 group-hover:text-orange-600 transition-colors">{brand.name}</p>
@@ -187,7 +189,7 @@ export default function Home() {
       </section>
 
       {/* Why Choose Us */}
-      <section className="bg-slate-900 py-14 md:py-20 relative overflow-hidden">
+      <section className="bg-slate-900 py-10 md:py-20 relative overflow-hidden">
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "40px 40px" }} />
         </div>
@@ -199,7 +201,7 @@ export default function Home() {
             <p className="text-slate-400 mt-2">We make buying pre-owned cars simple, safe, and satisfying</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
             {[
               {
                 icon: <svg className="w-7 h-7" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" /></svg>,
@@ -222,7 +224,7 @@ export default function Home() {
                 desc: "Quick loan approval with low EMIs and minimal documentation",
               },
             ].map((item) => (
-              <div key={item.title} className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-orange-500/30 hover:bg-white/10 transition-all duration-300">
+              <div key={item.title} className="bg-white/5 backdrop-blur-sm rounded-xl p-4 md:p-6 border border-white/10 hover:border-orange-500/30 hover:bg-white/10 transition-all duration-300">
                 <div className="w-12 h-12 bg-gradient-to-br from-orange-500/20 to-orange-600/20 rounded-xl flex items-center justify-center text-orange-400 mb-4">
                   {item.icon}
                 </div>
@@ -235,13 +237,13 @@ export default function Home() {
       </section>
 
       {/* Testimonials */}
-      <section className="max-w-7xl mx-auto px-4 md:px-6 py-14 md:py-20">
-        <div className="text-center mb-10">
+      <section className="max-w-7xl mx-auto px-4 md:px-6 py-10 md:py-20">
+        <div className="text-center mb-6 md:mb-10">
           <h2 className="section-title">What Our Customers Say</h2>
           <p className="section-subtitle">Real reviews from verified buyers</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {testimonials.map((t) => (
             <div
               key={t.name}
@@ -275,8 +277,8 @@ export default function Home() {
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-14 md:py-20 text-center">
-          <h2 className="text-2xl md:text-4xl font-extrabold text-white tracking-tight">
+        <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-10 md:py-20 text-center">
+          <h2 className="text-xl md:text-4xl font-extrabold text-white tracking-tight">
             Want to Sell Your Car?
           </h2>
           <p className="text-white/80 mt-3 text-base md:text-lg max-w-xl mx-auto">
@@ -300,7 +302,7 @@ export default function Home() {
       </section>
 
       {/* FAQ Section */}
-      <section className="max-w-3xl mx-auto px-4 md:px-6 py-14 md:py-20">
+      <section className="max-w-3xl mx-auto px-4 md:px-6 py-10 md:py-20">
         <div className="text-center mb-10">
           <h2 className="section-title">Frequently Asked Questions</h2>
           <p className="section-subtitle">Everything you need to know</p>
@@ -347,8 +349,8 @@ function BrandLogo({ brand }: { brand: Brand }) {
 
   if (!brand.logo || imgError) {
     return (
-      <div className={`w-14 h-14 bg-gradient-to-br ${gradients[gradientIndex]} rounded-xl flex items-center justify-center mx-auto shadow-sm`}>
-        <span className="text-white font-bold text-lg">{brand.name.charAt(0)}</span>
+      <div className={`w-10 h-10 md:w-14 md:h-14 bg-gradient-to-br ${gradients[gradientIndex]} rounded-xl flex items-center justify-center mx-auto shadow-sm`}>
+        <span className="text-white font-bold text-sm md:text-lg">{brand.name.charAt(0)}</span>
       </div>
     );
   }
@@ -357,7 +359,7 @@ function BrandLogo({ brand }: { brand: Brand }) {
     <img
       src={brand.logo}
       alt={`${brand.name} logo`}
-      className="w-14 h-14 object-contain mx-auto"
+      className="w-10 h-10 md:w-14 md:h-14 object-contain mx-auto"
       onError={() => setImgError(true)}
     />
   );

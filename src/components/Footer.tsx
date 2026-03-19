@@ -6,15 +6,15 @@ export default function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-300">
       {/* Main footer */}
-      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-14 pb-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-12 gap-6 md:gap-10">
           {/* Brand - wider column */}
-          <div className="lg:col-span-4">
-            <Link href="/" className="inline-block mb-5">
+          <div className="col-span-2 md:col-span-1 lg:col-span-4">
+            <Link href="/" className="inline-block mb-4 md:mb-5">
               <img
                 src="/images/logo.png"
                 alt="GaadiBroker"
-                className="h-16 w-auto"
+                className="h-12 md:h-16 w-auto"
               />
             </Link>
             <p className="text-sm leading-relaxed text-slate-400 max-w-xs">

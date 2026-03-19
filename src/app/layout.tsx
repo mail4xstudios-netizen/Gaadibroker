@@ -8,6 +8,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gaadibroker.com";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
   themeColor: "#ff6a00",
 };
 
@@ -58,6 +60,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="icon" href="/images/logo-icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/images/logo-icon.svg" />
         <WebsiteSchema />
