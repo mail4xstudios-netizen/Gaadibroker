@@ -3,11 +3,30 @@ import fs from "fs";
 import path from "path";
 import { logger } from "./logger";
 
-// On hosted platforms (Vercel, Hostinger), filesystem is read-only except /tmp
-const isHosted = process.env.NODE_ENV === "production";
-const DATA_DIR = isHosted
-  ? path.join("/tmp", "gaadibroker-data")
-  : path.join(process.cwd(), "src/data");
+// Determine writable data directory
+function getDataDir(): string {
+  const dirs = [
+    path.join(process.cwd(), "src/data"),
+    path.join(process.cwd(), ".data"),
+    path.join("/tmp", "gaadibroker-data"),
+  ];
+  for (const dir of dirs) {
+    try {
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      // Test write
+      const testFile = path.join(dir, ".write-test");
+      fs.writeFileSync(testFile, "ok");
+      fs.unlinkSync(testFile);
+      return dir;
+    } catch { /* try next */ }
+  }
+  return dirs[0]; // fallback
+}
+let _dataDir: string | null = null;
+const DATA_DIR = (() => {
+  if (!_dataDir) _dataDir = getDataDir();
+  return _dataDir;
+})();
 const SOURCE_DATA_DIR = path.join(process.cwd(), "src/data");
 
 function ensureDataDir() {
@@ -15,8 +34,8 @@ function ensureDataDir() {
     if (!fs.existsSync(DATA_DIR)) {
       fs.mkdirSync(DATA_DIR, { recursive: true });
     }
-    // On hosted platforms, copy source data files to /tmp if they don't exist yet
-    if (isHosted && fs.existsSync(SOURCE_DATA_DIR)) {
+    // Copy source data files if data dir is different from source
+    if (DATA_DIR !== SOURCE_DATA_DIR && fs.existsSync(SOURCE_DATA_DIR)) {
       const files = fs.readdirSync(SOURCE_DATA_DIR);
       for (const file of files) {
         const dest = path.join(DATA_DIR, file);
@@ -57,7 +76,7 @@ function writeJson<T>(filename: string, data: T): void {
     fs.renameSync(tmpPath, filePath);
   } catch (err) {
     logger.error(`Failed to write ${filename}`, err);
-    throw new Error(`Failed to save data to ${filename}`);
+    // Don't throw - gracefully handle read-only filesystems
   }
 }
 
