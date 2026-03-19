@@ -68,29 +68,6 @@ export default function MobileNav() {
           const active = isActive(tab.href);
           const isCenter = "isCenter" in tab && tab.isCenter;
 
-          if (isCenter) {
-            return (
-              <Link
-                key={tab.href}
-                href={tab.href}
-                className="flex flex-col items-center -mt-5"
-              >
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg transition-all duration-300 ${
-                  active
-                    ? "bg-gradient-to-br from-orange-500 to-orange-600 shadow-orange-300/40 scale-105"
-                    : "bg-gradient-to-br from-orange-500 to-orange-600 shadow-orange-200/30"
-                }`}>
-                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
-                    {tab.icon}
-                  </svg>
-                </div>
-                <span className={`text-[0.6rem] font-bold mt-1 ${active ? "text-orange-600" : "text-slate-500"}`}>
-                  {tab.label}
-                </span>
-              </Link>
-            );
-          }
-
           return (
             <Link
               key={tab.href}
