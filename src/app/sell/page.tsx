@@ -41,7 +41,7 @@ export default function SellPage() {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const res = await fetch("/new/api/sell-leads/upload", { method: "POST", body: formData });
+        const res = await fetch("/api/sell-leads/upload", { method: "POST", body: formData });
         const data = await res.json();
         if (data.url) {
           setImages((prev) => [...prev, data.url]);
@@ -67,7 +67,7 @@ export default function SellPage() {
       return;
     }
 
-    await fetch("/new/api/sell-leads", {
+    await fetch("/api/sell-leads", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -98,7 +98,7 @@ export default function SellPage() {
           </div>
           <h2 className="text-xl font-extrabold text-slate-900 mb-2">Login Required</h2>
           <p className="text-slate-500 text-sm mb-6">You need to be logged in to sell your car. This helps us verify your identity and contact you with offers.</p>
-          <a href="/new/auth" className="btn-primary inline-block w-full mb-3">Login / Sign Up</a>
+          <a href="/auth" className="btn-primary inline-block w-full mb-3">Login / Sign Up</a>
           <button onClick={() => setShowLoginPrompt(false)} className="text-slate-500 text-sm hover:text-slate-700">Go Back</button>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function SellPage() {
           <p className="text-slate-500 mt-2 max-w-md text-sm leading-relaxed">
             Our team will evaluate your {form.brand} {form.model} and contact you within 24 hours with the best offer.
           </p>
-          <a href="/new" className="btn-primary inline-block mt-6">Back to Home</a>
+          <a href="/" className="btn-primary inline-block mt-6">Back to Home</a>
         </div>
       </div>
     );
@@ -316,7 +316,7 @@ export default function SellPage() {
                 {!isLoggedIn && (
                   <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
                     <p className="text-amber-800 text-sm font-medium">You must be logged in to submit</p>
-                    <a href="/new/auth" className="text-orange-600 text-sm font-bold underline mt-1 inline-block">Login / Sign Up</a>
+                    <a href="/auth" className="text-orange-600 text-sm font-bold underline mt-1 inline-block">Login / Sign Up</a>
                   </div>
                 )}
 

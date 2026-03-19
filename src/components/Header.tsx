@@ -85,7 +85,7 @@ export default function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center group">
             <img
-              src="/new/images/logo.png"
+              src="/images/logo.png"
               alt="GaadiBroker"
               className="h-14 md:h-16 w-auto"
             />

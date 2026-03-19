@@ -81,18 +81,18 @@ export interface SellLead {
 }
 
 export const brands: Brand[] = [
-  { id: "1", name: "Maruti Suzuki", slug: "maruti", logo: "/new/brands/maruti.svg" },
-  { id: "2", name: "Hyundai", slug: "hyundai", logo: "/new/brands/hyundai.svg" },
-  { id: "3", name: "Tata", slug: "tata", logo: "/new/brands/tata.svg" },
-  { id: "4", name: "Mahindra", slug: "mahindra", logo: "/new/brands/mahindra.svg" },
-  { id: "5", name: "Honda", slug: "honda", logo: "/new/brands/honda.svg" },
-  { id: "6", name: "Toyota", slug: "toyota", logo: "/new/brands/toyota.svg" },
-  { id: "7", name: "Kia", slug: "kia", logo: "/new/brands/kia.svg" },
-  { id: "8", name: "BMW", slug: "bmw", logo: "/new/brands/bmw.svg" },
-  { id: "9", name: "Mercedes-Benz", slug: "mercedes", logo: "/new/brands/mercedes.svg" },
-  { id: "10", name: "Audi", slug: "audi", logo: "/new/brands/audi.svg" },
-  { id: "11", name: "Volkswagen", slug: "volkswagen", logo: "/new/brands/volkswagen.svg" },
-  { id: "12", name: "Skoda", slug: "skoda", logo: "/new/brands/skoda.svg" },
+  { id: "1", name: "Maruti Suzuki", slug: "maruti", logo: "/brands/maruti.svg" },
+  { id: "2", name: "Hyundai", slug: "hyundai", logo: "/brands/hyundai.svg" },
+  { id: "3", name: "Tata", slug: "tata", logo: "/brands/tata.svg" },
+  { id: "4", name: "Mahindra", slug: "mahindra", logo: "/brands/mahindra.svg" },
+  { id: "5", name: "Honda", slug: "honda", logo: "/brands/honda.svg" },
+  { id: "6", name: "Toyota", slug: "toyota", logo: "/brands/toyota.svg" },
+  { id: "7", name: "Kia", slug: "kia", logo: "/brands/kia.svg" },
+  { id: "8", name: "BMW", slug: "bmw", logo: "/brands/bmw.svg" },
+  { id: "9", name: "Mercedes-Benz", slug: "mercedes", logo: "/brands/mercedes.svg" },
+  { id: "10", name: "Audi", slug: "audi", logo: "/brands/audi.svg" },
+  { id: "11", name: "Volkswagen", slug: "volkswagen", logo: "/brands/volkswagen.svg" },
+  { id: "12", name: "Skoda", slug: "skoda", logo: "/brands/skoda.svg" },
 ];
 
 export const budgetRanges = [

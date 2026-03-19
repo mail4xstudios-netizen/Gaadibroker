@@ -8,7 +8,7 @@ export default function ComparePage() {
   const [selected, setSelected] = useState<(Car | null)[]>([null, null, null]);
 
   useEffect(() => {
-    fetch("/new/api/cars")
+    fetch("/api/cars")
       .then((r) => r.json())
       .then((data) => { if (data.length) setCars(data); })
       .catch(() => {});

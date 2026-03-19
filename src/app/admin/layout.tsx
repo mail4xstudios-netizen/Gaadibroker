@@ -40,7 +40,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return;
       }
       try {
-        const res = await fetch("/new/api/auth", {
+        const res = await fetch("/api/auth", {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (res.ok) {
@@ -71,7 +71,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     }
 
     try {
-      const res = await fetch("/new/api/auth", {
+      const res = await fetch("/api/auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: username.trim(), password }),
@@ -104,7 +104,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
           <div className="text-center mb-6">
-            <img src="/new/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto mb-3" />
+            <img src="/images/logo.png" alt="GaadiBroker" className="h-18 w-auto mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-gray-900">Admin Login</h1>
             <p className="text-gray-500 text-sm mt-1">GaadiBroker Dashboard</p>
           </div>
@@ -155,7 +155,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       } md:translate-x-0 transition-transform overflow-y-auto`}>
         <div className="p-6">
           <Link href="/admin" className="flex items-center gap-3">
-            <img src="/new/images/logo-icon.svg" alt="GaadiBroker" className="w-8 h-8" />
+            <img src="/images/logo-icon.svg" alt="GaadiBroker" className="w-8 h-8" />
             <span className="text-lg font-bold text-white">Admin Panel</span>
           </Link>
         </div>

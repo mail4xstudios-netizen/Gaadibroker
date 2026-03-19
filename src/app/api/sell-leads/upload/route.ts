@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
     writeFileSync(filePath, buffer);
 
-    return NextResponse.json({ url: `/new/sell-images/${safeName}` }, { status: 201 });
+    return NextResponse.json({ url: `/sell-images/${safeName}` }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }

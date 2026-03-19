@@ -41,7 +41,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
           </button>
 
           {/* Logo */}
-          <img src="/new/images/logo.png" alt="GaadiBroker" className="h-16 w-auto mx-auto mb-5" />
+          <img src="/images/logo.png" alt="GaadiBroker" className="h-16 w-auto mx-auto mb-5" />
 
           {/* Content */}
           <h2 className="text-xl font-extrabold text-slate-900 text-center tracking-tight">
