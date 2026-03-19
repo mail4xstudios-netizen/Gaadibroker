@@ -299,6 +299,11 @@ input[type="range"]::-webkit-slider-thumb {
   }
 }
 
+/* Safe area for bottom nav on notched phones */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 /* GPU acceleration for smooth scrolling */
 .backdrop-blur-md, .backdrop-blur-sm, .backdrop-blur-xl {
   will-change: transform;
