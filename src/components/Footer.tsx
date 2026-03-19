@@ -14,7 +14,7 @@ export default function Footer() {
               <img
                 src="/images/logo.png"
                 alt="GaadiBroker"
-                className="h-12 md:h-16 w-auto"
+                className="h-5 md:h-9 w-auto"
               />
             </Link>
             <p className="text-sm leading-relaxed text-slate-400 max-w-xs">
