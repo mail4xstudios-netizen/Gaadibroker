@@ -132,14 +132,26 @@ export default function AdminBrandsPage() {
               <div>
                 <label className="text-sm font-medium text-gray-700 block mb-1">Logo</label>
                 <div className="space-y-2">
-                  {/* File Upload */}
-                  <div className="flex items-center gap-2">
-                    <label className={`flex items-center gap-2 px-4 py-2.5 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
-                      <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg>
-                      <span className="text-sm text-gray-600">{uploading ? "Uploading..." : "Upload PNG/SVG"}</span>
+                  {form.logo ? (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <img src={form.logo} alt="Logo" className="w-12 h-12 object-contain rounded border border-gray-200 bg-white p-1" onError={(e) => { (e.target as HTMLImageElement).src = ""; }} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-gray-500 truncate">{form.logo}</p>
+                      </div>
+                      <button type="button" onClick={() => setForm({ ...form, logo: "" })} className="text-red-500 text-xs font-medium hover:text-red-700">Remove</button>
+                    </div>
+                  ) : (
+                    <label className={`flex flex-col items-center gap-2 p-4 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-colors ${uploading ? "opacity-50 pointer-events-none" : ""}`}>
+                      {uploading ? (
+                        <div className="w-6 h-6 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg>
+                      )}
+                      <span className="text-sm text-gray-600 font-medium">{uploading ? "Uploading..." : "Upload Logo"}</span>
+                      <span className="text-xs text-gray-400">PNG, SVG, JPG, WebP - Max 5MB</span>
                       <input
                         type="file"
-                        accept=".png,.svg,.jpg,.jpeg,.webp,image/png,image/svg+xml,image/jpeg,image/webp"
+                        accept="image/png,image/svg+xml,image/jpeg,image/webp"
                         className="hidden"
                         onChange={async (e) => {
                           const file = e.target.files?.[0];
@@ -148,10 +160,9 @@ export default function AdminBrandsPage() {
                           try {
                             const fd = new FormData();
                             fd.append("file", file);
-                            const token = sessionStorage.getItem("admin_token");
-                            const res = await fetch("/api/admin/upload", {
+                            fd.append("folder", "brands");
+                            const res = await adminFetch("/api/admin/upload", {
                               method: "POST",
-                              headers: { Authorization: `Bearer ${token || ""}` },
                               body: fd,
                             });
                             const data = await res.json();
@@ -169,38 +180,11 @@ export default function AdminBrandsPage() {
                         }}
                       />
                     </label>
-                    <span className="text-xs text-gray-400">or</span>
-                    <input
-                      type="text"
-                      placeholder="Paste logo URL"
-                      value={form.logo}
-                      onChange={(e) => setForm({ ...form, logo: e.target.value })}
-                      className="flex-1 px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
 
-            {/* Logo Preview */}
-            {form.logo && (
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-gray-500">Preview:</span>
-                <img
-                  src={form.logo}
-                  alt="Logo preview"
-                  className="w-12 h-12 object-contain border border-gray-200 rounded-lg p-1"
-                  onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setForm({ ...form, logo: "" })}
-                  className="text-red-500 text-xs hover:underline"
-                >
-                  Remove
-                </button>
-              </div>
-            )}
 
             <div className="flex gap-3">
               <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50">

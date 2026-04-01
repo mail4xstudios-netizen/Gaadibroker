@@ -1,9 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Car, Brand, brands as defaultBrands, cities } from "@/lib/data";
 import { adminFetch } from "@/lib/admin-fetch";
+
+const MAX_IMAGES = 7;
 
 export default function AdminEditCarPage() {
   const params = useParams();
@@ -13,6 +15,8 @@ export default function AdminEditCarPage() {
   const [saving, setSaving] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const [form, setForm] = useState<Partial<Car> & { featuresText?: string }>({});
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     adminFetch("/api/admin/cars")
@@ -33,6 +37,46 @@ export default function AdminEditCarPage() {
   }, [id]);
 
   const update = (key: string, value: unknown) => setForm({ ...form, [key]: value });
+
+  const uploadFiles = async (files: FileList | File[]) => {
+    const currentImages = form.images || [];
+    const remaining = MAX_IMAGES - currentImages.length;
+    const toUpload = Array.from(files).slice(0, remaining);
+    if (toUpload.length === 0) return;
+
+    setUploading(true);
+    const newUrls: string[] = [];
+
+    for (const file of toUpload) {
+      if (!file.type.startsWith("image/")) continue;
+      if (file.size > 5 * 1024 * 1024) continue;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", "cars");
+
+      try {
+        const res = await adminFetch("/api/admin/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (data.url) newUrls.push(data.url);
+      } catch { /* skip */ }
+    }
+
+    update("images", [...currentImages, ...newUrls]);
+    setUploading(false);
+  };
+
+  const removeImage = (index: number) => {
+    update("images", (form.images || []).filter((_, i) => i !== index));
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    if (e.dataTransfer.files.length > 0) uploadFiles(e.dataTransfer.files);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -68,12 +112,14 @@ export default function AdminEditCarPage() {
     return <div className="p-8 text-center">Loading...</div>;
   }
 
+  const images = form.images || [];
+
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Edit Car: {form.name}</h1>
+      <h1 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6">Edit: {form.name}</h1>
 
       <form onSubmit={handleSubmit} className="max-w-3xl">
-        <div className="bg-white rounded-xl shadow-md p-6 space-y-5">
+        <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">Car Name</label>
@@ -123,55 +169,114 @@ export default function AdminEditCarPage() {
                 ))}
               </select>
             </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Transmission</label>
+              <select value={form.transmission || ""} onChange={(e) => update("transmission", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                <option value="Manual">Manual</option>
+                <option value="Automatic">Automatic</option>
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Owner Type</label>
+              <select value={form.ownerType || ""} onChange={(e) => update("ownerType", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500">
+                {["1st Owner", "2nd Owner", "3rd Owner", "4th Owner+"].map((o) => (
+                  <option key={o} value={o}>{o}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Location</label>
+              <input type="text" value={form.location || ""} onChange={(e) => update("location", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Color</label>
+              <input type="text" value={form.color || ""} onChange={(e) => update("color", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Registration</label>
+              <input type="text" value={form.registration || ""} onChange={(e) => update("registration", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">Insurance</label>
+              <input type="text" value={form.insurance || ""} onChange={(e) => update("insurance", e.target.value)}
+                className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
+            </div>
+          </div>
+
+          {/* Image Upload Section */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-2">
+              Car Photos <span className="text-gray-400 font-normal">({images.length}/{MAX_IMAGES})</span>
+            </label>
+
+            {images.length > 0 && (
+              <div className="grid grid-cols-3 md:grid-cols-4 gap-2 mb-3">
+                {images.map((url, idx) => (
+                  <div key={idx} className="relative group">
+                    <div className="aspect-[4/5] rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                      <img src={url} alt={`Car photo ${idx + 1}`} className="w-full h-full object-cover" />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => removeImage(idx)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                    </button>
+                    {idx === 0 && (
+                      <span className="absolute bottom-1 left-1 bg-orange-500 text-white text-[0.6rem] px-1.5 py-0.5 rounded font-medium">Cover</span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {images.length < MAX_IMAGES && (
+              <div
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
+                  uploading ? "border-orange-300 bg-orange-50" : "border-gray-300 hover:border-orange-400 hover:bg-orange-50/50"
+                }`}
+              >
+                {uploading ? (
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-sm text-orange-600 font-medium">Uploading...</p>
+                  </div>
+                ) : (
+                  <>
+                    <svg className="w-10 h-10 text-gray-300 mx-auto mb-2" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 21h16.5A2.25 2.25 0 0 0 22.5 18.75V5.25A2.25 2.25 0 0 0 20.25 3H3.75A2.25 2.25 0 0 0 1.5 5.25v13.5A2.25 2.25 0 0 0 3.75 21Z" /></svg>
+                    <p className="text-sm font-medium text-gray-700">Tap to upload or drag & drop</p>
+                    <p className="text-xs text-gray-400 mt-1">JPG, PNG, WebP - Max 5MB - Max {MAX_IMAGES} photos</p>
+                  </>
+                )}
+              </div>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) uploadFiles(e.target.files);
+                e.target.value = "";
+              }}
+            />
           </div>
 
           <div>
             <label className="text-sm font-medium text-gray-700 block mb-1">Description</label>
             <textarea rows={3} value={form.description || ""} onChange={(e) => update("description", e.target.value)}
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none" />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-gray-700 block mb-2">Car Images</label>
-            <div className="space-y-3">
-              {(form.images || [""]).map((img, idx) => (
-                <div key={idx} className="flex gap-2 items-start">
-                  <div className="flex-1">
-                    <input
-                      type="text"
-                      placeholder="https://example.com/car-image.jpg"
-                      value={img}
-                      onChange={(e) => {
-                        const newImages = [...(form.images || [""])];
-                        newImages[idx] = e.target.value;
-                        update("images", newImages);
-                      }}
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                    {img && img.trim() && (
-                      <img src={img} alt={`Preview ${idx + 1}`} className="mt-1 h-16 w-24 object-cover rounded border border-gray-200" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                    )}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const newImages = (form.images || [""]).filter((_, i) => i !== idx);
-                      update("images", newImages.length ? newImages : [""]);
-                    }}
-                    className="px-3 py-2.5 text-red-500 hover:bg-red-50 rounded-lg text-sm font-medium"
-                  >
-                    Remove
-                  </button>
-                </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => update("images", [...(form.images || [""]), ""])}
-                className="text-sm text-orange-500 font-medium hover:text-orange-700"
-              >
-                + Add Another Image
-              </button>
-            </div>
           </div>
 
           <div>
@@ -187,7 +292,7 @@ export default function AdminEditCarPage() {
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button type="submit" disabled={saving} className="btn-primary disabled:opacity-50">
+            <button type="submit" disabled={saving || uploading} className="btn-primary disabled:opacity-50">
               {saving ? "Saving..." : "Update Car"}
             </button>
             <button type="button" onClick={() => router.back()} className="btn-outline">Cancel</button>

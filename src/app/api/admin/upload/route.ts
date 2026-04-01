@@ -5,7 +5,7 @@ import path from "path";
 
 const ALLOWED_TYPES = ["image/png", "image/svg+xml", "image/jpeg", "image/webp"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
-const ALLOWED_FOLDERS = ["brands", "uploads"];
+const ALLOWED_FOLDERS = ["brands", "uploads", "cars"];
 
 export async function POST(request: Request) {
   if (!authenticateRequest(request)) {

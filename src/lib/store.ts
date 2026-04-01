@@ -81,7 +81,7 @@ function writeJson<T>(filename: string, data: T): void {
 }
 
 export function getCars(): Car[] {
-  return readJson<Car[]>("cars.json", sampleCars);
+  return readJson<Car[]>("cars.json", []);
 }
 
 export function getCarById(id: string): Car | undefined {
@@ -128,6 +128,15 @@ export function updateLeadStatus(id: string, status: Lead["status"]): Lead | nul
   const index = leads.findIndex((l) => l.id === id);
   if (index === -1) return null;
   leads[index].status = status;
+  writeJson("leads.json", leads);
+  return leads[index];
+}
+
+export function updateLead(id: string, updates: Partial<Lead>): Lead | null {
+  const leads = getLeads();
+  const index = leads.findIndex((l) => l.id === id);
+  if (index === -1) return null;
+  leads[index] = { ...leads[index], ...updates };
   writeJson("leads.json", leads);
   return leads[index];
 }

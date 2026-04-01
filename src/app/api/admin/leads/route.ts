@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getLeads, updateLeadStatus } from "@/lib/store";
+import { getLeads, updateLeadStatus, updateLead } from "@/lib/store";
 import { authenticateRequest } from "@/lib/auth";
 import { logger } from "@/lib/logger";
 
@@ -27,17 +27,25 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  if (!body.id || !body.status) {
-    return NextResponse.json({ error: "id and status are required" }, { status: 400 });
-  }
-
-  const validStatuses = ["new", "contacted", "converted", "closed"];
-  if (!validStatuses.includes(body.status)) {
-    return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
+  if (!body.id) {
+    return NextResponse.json({ error: "id is required" }, { status: 400 });
   }
 
   try {
-    const lead = updateLeadStatus(body.id, body.status);
+    // If only status update (backward compatible)
+    if (body.status && Object.keys(body).length <= 2) {
+      const validStatuses = ["new", "contacted", "converted", "closed"];
+      if (!validStatuses.includes(body.status)) {
+        return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
+      }
+      const lead = updateLeadStatus(body.id, body.status);
+      if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
+      return NextResponse.json(lead);
+    }
+
+    // Full lead update (supports leadType, followUpDate, followUpNotes, callHistory, status)
+    const { id, ...updates } = body;
+    const lead = updateLead(id, updates);
     if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(lead);
   } catch (err) {

@@ -25,6 +25,16 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
+
   const handleLogout = () => {
     sessionStorage.removeItem("user_token");
     sessionStorage.removeItem("user_refresh_token");
@@ -49,7 +59,7 @@ export default function Header() {
   };
 
   return (
-    <header className={`sticky top-0 z-50 transition-all duration-300 ${
+    <header className={`sticky top-0 z-50 transition-colors duration-300 ${
       scrolled
         ? "bg-white/95 backdrop-blur-md shadow-[0_1px_3px_rgba(0,0,0,.08)]"
         : "bg-white"
@@ -178,47 +188,80 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${mobileOpen ? "max-h-[500px] border-t border-slate-100" : "max-h-0"}`}>
-        <nav className="px-4 py-3 space-y-0.5 bg-white">
+      {/* Mobile Menu - Slide from right */}
+      {/* Overlay */}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
+          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setMobileOpen(false)}
+      />
+
+      {/* Drawer */}
+      <div
+        className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+      >
+        {/* Drawer header */}
+        <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100">
+          <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-5 w-auto" />
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+            aria-label="Close menu"
+          >
+            <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <nav className="px-4 py-4 space-y-0.5">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               onClick={() => setMobileOpen(false)}
-              className={`block px-4 py-3 rounded-lg font-medium text-sm transition-colors ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-lg font-medium text-sm transition-colors ${
                 isActive(link.href)
                   ? "text-orange-600 bg-orange-50"
                   : "text-slate-700 hover:text-orange-600 hover:bg-orange-50"
               }`}
             >
               {link.label}
+              {isActive(link.href) && (
+                <span className="ml-auto w-1.5 h-1.5 bg-orange-500 rounded-full" />
+              )}
             </Link>
           ))}
-          <div className="pt-2 mt-2 border-t border-slate-100">
-            {user ? (
-              <div className="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
-                  </div>
-                  <span className="text-sm font-medium text-slate-700">{user.name}</span>
-                </div>
-                <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="text-sm text-red-600 font-medium">
-                  Sign Out
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/auth"
-                onClick={() => setMobileOpen(false)}
-                className="block text-center btn-primary mt-1"
-              >
-                Login / Sign Up
-              </Link>
-            )}
-          </div>
         </nav>
+
+        {/* User section at bottom */}
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 pt-3 border-t border-slate-100 bg-white">
+          {user ? (
+            <div className="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
+                </div>
+                <span className="text-sm font-medium text-slate-700">{user.name}</span>
+              </div>
+              <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="text-sm text-red-600 font-medium">
+                Sign Out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/auth"
+              onClick={() => setMobileOpen(false)}
+              className="block text-center btn-primary"
+            >
+              Login / Sign Up
+            </Link>
+          )}
+        </div>
       </div>
     </header>
   );

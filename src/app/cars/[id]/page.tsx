@@ -7,7 +7,7 @@ import LeadForm from "@/components/LeadForm";
 import EMICalculator from "@/components/EMICalculator";
 import MobileBottomBar from "@/components/MobileBottomBar";
 import CarCard from "@/components/CarCard";
-import AuthGate from "@/components/AuthGate";
+import { DealerNumberGate } from "@/components/AuthGate";
 
 export default function CarDetailPage() {
   const { id } = useParams();
@@ -65,7 +65,6 @@ export default function CarDetailPage() {
   ];
 
   return (
-    <AuthGate>
     <div className="bg-slate-50 pb-20 md:pb-0">
       {/* Breadcrumb */}
       <div className="bg-white border-b border-slate-100">
@@ -189,6 +188,7 @@ export default function CarDetailPage() {
 
           {/* Right Column */}
           <div className="lg:w-1/3 space-y-4">
+            <DealerNumberGate carName={car.name} />
             <LeadForm carId={car.id} carName={car.name} />
             <EMICalculator carPrice={car.price} />
 
@@ -235,6 +235,5 @@ export default function CarDetailPage() {
 
       <MobileBottomBar carName={car.name} />
     </div>
-    </AuthGate>
   );
 }
