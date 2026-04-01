@@ -1,0 +1,35 @@
+[
+  {
+    "name": "GLC 300d Coupe",
+    "brand": "Mercedes-Benz",
+    "model": "300d Coupe",
+    "year": 2021,
+    "price": 4400000,
+    "originalPrice": 7300000,
+    "fuelType": "Petrol",
+    "transmission": "Manual",
+    "kmDriven": 28000,
+    "ownerType": "1st Owner",
+    "location": "Seawoods",
+    "city": "Mumbai",
+    "features": [
+      "ABS",
+      "AIRBAG"
+    ],
+    "description": "",
+    "color": "Black",
+    "registration": "MH - 02",
+    "insurance": "",
+    "featured": true,
+    "images": [
+      "/cars/whatsapp-image-2026-03-30-at-18-49-06-1-1775028809867.jpeg",
+      "/cars/whatsapp-image-2026-03-30-at-18-49-06-2-1775028810105.jpeg",
+      "/cars/whatsapp-image-2026-03-30-at-18-49-06-1775028810353.jpeg",
+      "/cars/whatsapp-image-2026-03-30-at-18-49-07-1-1775028810612.jpeg",
+      "/cars/whatsapp-image-2026-03-30-at-18-49-07-1775028810865.jpeg",
+      "/cars/whatsapp-image-2026-03-30-at-18-49-08-1775028811119.jpeg"
+    ],
+    "id": "1775028836740",
+    "createdAt": "2026-04-01"
+  }
+]

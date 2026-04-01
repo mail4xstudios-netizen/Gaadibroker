@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1773849553110",
+    "userId": "",
+    "userName": "Test",
+    "userPhone": "9876543210",
+    "userEmail": "",
+    "brand": "Maruti",
+    "model": "Swift",
+    "year": "2022",
+    "kmDriven": "30000",
+    "fuelType": "Petrol",
+    "city": "Mumbai",
+    "expectedPrice": "",
+    "images": [
+      "test.jpg"
+    ],
+    "status": "new",
+    "adminNotes": "",
+    "createdAt": "2026-03-18T15:59:13.110Z"
+  },
+  {
+    "id": "1773850252972",
+    "userId": "75bef287-8b09-47ec-8dfd-4598bd7760da",
+    "userName": "test",
+    "userPhone": "7058407994",
+    "userEmail": "test@gmail.com",
+    "brand": "Hyundai",
+    "model": "venue",
+    "year": "2023",
+    "kmDriven": "50000",
+    "fuelType": "Petrol",
+    "city": "vashi",
+    "expectedPrice": "70000",
+    "images": [
+      "/new/sell-images/sell-1773850218636-rh3yjk.jpg"
+    ],
+    "status": "new",
+    "adminNotes": "",
+    "createdAt": "2026-03-18T16:10:52.972Z"
+  }
+]

@@ -1,0 +1,74 @@
+[
+  {
+    "id": "1",
+    "name": "Maruti Suzuki",
+    "slug": "maruti",
+    "logo": "/brands/maruti-suzuki-logo-png-1775029647307.png"
+  },
+  {
+    "id": "2",
+    "name": "Hyundai",
+    "slug": "hyundai",
+    "logo": "/brands/hyundai-motor-company-2-logo-png-transparent-1775029764346.png"
+  },
+  {
+    "id": "3",
+    "name": "Tata",
+    "slug": "tata",
+    "logo": "/brands/tata-logo-tata-icon-transparent-free-png-1775029840983.webp"
+  },
+  {
+    "id": "4",
+    "name": "Mahindra",
+    "slug": "mahindra",
+    "logo": "/brands/mahindra-auto-logo-png-seeklogo-613492-1775029886745.png"
+  },
+  {
+    "id": "5",
+    "name": "Honda",
+    "slug": "honda",
+    "logo": "/brands/honda-silver-logo-png-seeklogo-289413-1775029917215.png"
+  },
+  {
+    "id": "6",
+    "name": "Toyota",
+    "slug": "toyota",
+    "logo": "/brands/toyota-logo-red-svg-1775029968137.png"
+  },
+  {
+    "id": "7",
+    "name": "Kia",
+    "slug": "kia",
+    "logo": "/brands/kia-new-2021-logo-png-seeklogo-394641-1775030006627.png"
+  },
+  {
+    "id": "8",
+    "name": "BMW",
+    "slug": "bmw",
+    "logo": "/brands/bmw-svg-1775030037509.png"
+  },
+  {
+    "id": "9",
+    "name": "Mercedes-Benz",
+    "slug": "mercedes",
+    "logo": "/brands/mercedes-logo-svg-1775030071245.png"
+  },
+  {
+    "id": "10",
+    "name": "Audi",
+    "slug": "audi",
+    "logo": "/brands/images-1775030104764.png"
+  },
+  {
+    "id": "11",
+    "name": "Volkswagen",
+    "slug": "volkswagen",
+    "logo": "/brands/volkswagen-logo-svg-1775030139194.png"
+  },
+  {
+    "id": "12",
+    "name": "Skoda",
+    "slug": "skoda",
+    "logo": "/brands/skoda-logo-11548789247jfk3ttt2ge-1775030219137.png"
+  }
+]

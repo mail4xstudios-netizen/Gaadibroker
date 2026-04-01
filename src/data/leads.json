@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1773768910074",
+    "name": "Test User",
+    "phone": "9876543210",
+    "carId": "1",
+    "carName": "Maruti Swift",
+    "source": "website",
+    "status": "new",
+    "createdAt": "2026-03-17T17:35:10.074Z"
+  },
+  {
+    "id": "1773769788879",
+    "name": "Duniya ka papa",
+    "phone": "8339847477",
+    "carId": "2",
+    "carName": "Hyundai Creta SX(O)",
+    "source": "detail_page",
+    "status": "new",
+    "createdAt": "2026-03-17T17:49:48.879Z"
+  },
+  {
+    "id": "1773786777711",
+    "name": "Test User",
+    "phone": "9876543210",
+    "carId": "1",
+    "carName": "Test Car",
+    "source": "test",
+    "status": "new",
+    "createdAt": "2026-03-17T22:32:57.711Z"
+  },
+  {
+    "id": "1773825537652",
+    "name": "kibahsba",
+    "phone": "9372000000",
+    "carId": "1773787460309",
+    "carName": "tank",
+    "source": "detail_page",
+    "status": "new",
+    "createdAt": "2026-03-18T09:18:57.652Z"
+  }
+]

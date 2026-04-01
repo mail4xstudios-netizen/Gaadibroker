@@ -1,0 +1,38 @@
+[
+  {
+    "id": "4221b977-d4e6-4b58-9f6a-376cf466ad71",
+    "name": "OMKAR MAHADEV WADKAR",
+    "email": "saniya.avtr@gmail.com",
+    "phone": "7057335153",
+    "passwordHash": "d1335c4f556104a7cdfffaa47ef52fce10ae7bed720f18d640910bb23c4280fcfb008784bce96cbb6175c161f7ecfa419296526e8fe9278709c2132d66fedb68",
+    "passwordSalt": "7f616caf4c4b396b08c3884e6d887d2189f348d4a5cf219d4690b6aad9cccd9c",
+    "emailVerified": false,
+    "phoneVerified": false,
+    "role": "user",
+    "blocked": false,
+    "lastLoginAt": "2026-03-18T04:30:15.171Z",
+    "lastLoginIp": "::1",
+    "lastLoginDevice": "Desktop",
+    "loginCount": 1,
+    "createdAt": "2026-03-18T04:30:15.171Z",
+    "updatedAt": "2026-03-18T04:30:15.171Z"
+  },
+  {
+    "id": "75bef287-8b09-47ec-8dfd-4598bd7760da",
+    "name": "test",
+    "email": "test@gmail.com",
+    "phone": "7058407994",
+    "passwordHash": "a33c12321278cbddf03f5e1fa46ba0b60a648eb4467f6cdf7f0f1e6373950f83725028d1f3920815c9c48e5a29c0a06a205297f20bb19412f522bf0e3355b451",
+    "passwordSalt": "7be9a0c676c61cb4800a1cef2b89f5f5edd5dba6d4593abda2e9d9da916e019a",
+    "emailVerified": false,
+    "phoneVerified": false,
+    "role": "user",
+    "blocked": false,
+    "lastLoginAt": "2026-03-18T16:09:34.526Z",
+    "lastLoginIp": "::1",
+    "lastLoginDevice": "Desktop",
+    "loginCount": 1,
+    "createdAt": "2026-03-18T16:09:34.526Z",
+    "updatedAt": "2026-03-18T16:09:34.526Z"
+  }
+]
