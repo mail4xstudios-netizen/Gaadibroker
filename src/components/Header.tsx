@@ -98,7 +98,7 @@ export default function Header() {
             <img
               src="/images/logo-v2.png"
               alt="GaadiBroker"
-              className="h-5 md:h-9 w-auto"
+              className="h-8 md:h-12 w-auto"
             />
           </Link>
 
