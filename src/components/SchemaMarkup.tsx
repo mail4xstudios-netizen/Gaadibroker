@@ -11,7 +11,7 @@ export function WebsiteSchema() {
       "query-input": "required name=search_term_string",
     },
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }
 
 export function OrganizationSchema() {
@@ -24,21 +24,21 @@ export function OrganizationSchema() {
     sameAs: [],
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: "+91-98765-43210",
+      telephone: "+91-8108797000",
       contactType: "customer service",
       areaServed: "IN",
       availableLanguage: ["English", "Hindi"],
     },
     address: {
       "@type": "PostalAddress",
-      streetAddress: "123 Auto Lane, Andheri West",
-      addressLocality: "Mumbai",
+      streetAddress: "Shop 48, Shreeji Heights, Sector-46/A, Seawoods",
+      addressLocality: "Navi Mumbai",
       addressRegion: "Maharashtra",
-      postalCode: "400053",
+      postalCode: "400706",
       addressCountry: "IN",
     },
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }
 
 export function CarSchema({ car }: { car: { name: string; price: number; year: number; kmDriven: number; fuelType: string; transmission: string; color: string; images: string[]; description: string; city: string } }) {
@@ -66,7 +66,7 @@ export function CarSchema({ car }: { car: { name: string; price: number; year: n
       areaServed: { "@type": "City", name: car.city },
     },
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }
 
 export function FAQSchema({ faqs }: { faqs: { q: string; a: string }[] }) {
@@ -79,7 +79,7 @@ export function FAQSchema({ faqs }: { faqs: { q: string; a: string }[] }) {
       acceptedAnswer: { "@type": "Answer", text: faq.a },
     })),
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }
 
 export function BreadcrumbSchema({ items }: { items: { name: string; url: string }[] }) {
@@ -93,7 +93,7 @@ export function BreadcrumbSchema({ items }: { items: { name: string; url: string
       item: item.url,
     })),
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }
 
 export function LocalBusinessSchema({ city }: { city: string }) {
@@ -102,7 +102,7 @@ export function LocalBusinessSchema({ city }: { city: string }) {
     "@type": "AutoDealer",
     name: `GaadiBroker ${city}`,
     url: `https://gaadibroker.com/cars?city=${encodeURIComponent(city)}`,
-    telephone: "+91-98765-43210",
+    telephone: "+91-8108797000",
     address: {
       "@type": "PostalAddress",
       addressLocality: city,
@@ -111,5 +111,5 @@ export function LocalBusinessSchema({ city }: { city: string }) {
     priceRange: "$$",
     openingHours: "Mo-Sa 09:00-20:00",
   };
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} />;
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema).replace(/</g, "\\u003c") }} />;
 }

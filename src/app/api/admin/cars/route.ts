@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       brand: sanitize(body.brand, 100),
       model: sanitize(body.model || "", 100),
       description: sanitize(body.description || "", 2000),
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       createdAt: new Date().toISOString().split("T")[0],
     });
     return NextResponse.json(car, { status: 201 });
@@ -67,8 +67,20 @@ export async function PUT(request: Request) {
   if (!body.id) return badRequest("Car ID is required");
 
   try {
-    const { id, ...updates } = body;
-    const car = updateCar(id, updates);
+    // Whitelist and sanitize allowed fields
+    const allowedFields = ["name", "brand", "model", "year", "price", "originalPrice", "fuelType",
+      "transmission", "kmDriven", "ownerType", "location", "city", "features", "description",
+      "color", "registration", "insurance", "images", "featured"];
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (body[key] !== undefined) updates[key] = body[key];
+    }
+    if (updates.name) updates.name = sanitize(updates.name as string, 200);
+    if (updates.brand) updates.brand = sanitize(updates.brand as string, 100);
+    if (updates.model) updates.model = sanitize(updates.model as string, 100);
+    if (updates.description) updates.description = sanitize(updates.description as string, 2000);
+
+    const car = updateCar(body.id, updates);
     if (!car) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(car);
   } catch (err) {

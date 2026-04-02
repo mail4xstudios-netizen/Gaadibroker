@@ -4,7 +4,7 @@ export default function MobileBottomBar({ carName }: { carName?: string }) {
   return (
     <div className="fixed bottom-0 left-0 right-0 md:hidden bg-white border-t border-gray-200 px-4 py-3 z-40 flex gap-3">
       <a
-        href="tel:+919876543210"
+        href="tel:+918108797000"
         className="flex-1 bg-gray-900 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -13,7 +13,7 @@ export default function MobileBottomBar({ carName }: { carName?: string }) {
         Call Now
       </a>
       <a
-        href={`https://wa.me/919876543210?text=${encodeURIComponent(`Hi! I'm interested in ${carName || "a car"} on GaadiBroker.`)}`}
+        href={`https://wa.me/918108797000?text=${encodeURIComponent(`Hi! I'm interested in ${carName || "a car"} on GaadiBroker.`)}`}
         target="_blank"
         rel="noopener noreferrer"
         className="flex-1 bg-orange-500 text-white text-center py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2"

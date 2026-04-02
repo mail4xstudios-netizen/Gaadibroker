@@ -43,9 +43,13 @@ export async function PUT(request: Request) {
       return NextResponse.json(lead);
     }
 
-    // Full lead update (supports leadType, followUpDate, followUpNotes, callHistory, status)
-    const { id, ...updates } = body;
-    const lead = updateLead(id, updates);
+    // Full lead update — whitelist allowed fields only
+    const allowedFields = ["status", "leadType", "followUpDate", "followUpNotes", "callHistory"];
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (body[key] !== undefined) updates[key] = body[key];
+    }
+    const lead = updateLead(body.id, updates);
     if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(lead);
   } catch (err) {

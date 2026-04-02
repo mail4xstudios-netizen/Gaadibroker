@@ -148,10 +148,10 @@ export default function AdminBrandsPage() {
                         <svg className="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" /></svg>
                       )}
                       <span className="text-sm text-gray-600 font-medium">{uploading ? "Uploading..." : "Upload Logo"}</span>
-                      <span className="text-xs text-gray-400">PNG, SVG, JPG, WebP - Max 5MB</span>
+                      <span className="text-xs text-gray-400">PNG, JPG, WebP - Max 5MB</span>
                       <input
                         type="file"
-                        accept="image/png,image/svg+xml,image/jpeg,image/webp"
+                        accept="image/png,image/jpeg,image/webp"
                         className="hidden"
                         onChange={async (e) => {
                           const file = e.target.files?.[0];

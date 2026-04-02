@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUserById, updateUser } from "@/lib/store";
-import { extractUserFromRequest, hashUserPassword } from "@/lib/user-auth";
+import { extractUserFromRequest, hashUserPassword, verifyUserPassword } from "@/lib/user-auth";
 import { sanitize, isValidPhone } from "@/lib/validate";
 import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
@@ -65,8 +65,14 @@ export async function PUT(request: Request) {
   if (body.city) updates.city = sanitize(body.city, 50);
   if (body.avatar) updates.avatar = sanitize(body.avatar, 500);
 
-  // Password change
+  // Password change — requires current password verification
   if (body.newPassword) {
+    if (!body.currentPassword) {
+      return NextResponse.json({ error: "Current password is required to change password" }, { status: 400 });
+    }
+    if (!verifyUserPassword(body.currentPassword, user.passwordHash || "", user.passwordSalt || "")) {
+      return NextResponse.json({ error: "Current password is incorrect" }, { status: 403 });
+    }
     if (body.newPassword.length < 8) {
       return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
     }

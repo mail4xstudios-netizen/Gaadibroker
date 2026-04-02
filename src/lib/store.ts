@@ -162,9 +162,9 @@ const defaultContent: SiteContent = {
   sliderImages: [],
   aboutText: "GaadiBroker is India's leading pre-owned car marketplace.",
   contactEmail: "hello@gaadibroker.com",
-  contactPhone: "+91 98765 43210",
-  contactAddress: "123 Auto Lane, Andheri West, Mumbai 400053",
-  whatsappNumber: "919876543210",
+  contactPhone: "+91 8108797000",
+  contactAddress: "Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai, Maharashtra 400706",
+  whatsappNumber: "918108797000",
 };
 
 export function getSiteContent(): SiteContent {

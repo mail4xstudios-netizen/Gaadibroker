@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   try {
     const brand = addBrand({
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       name: sanitize(body.name, 100),
       slug: sanitize(body.slug, 50).toLowerCase().replace(/[^a-z0-9-]/g, "-"),
       logo: sanitize(body.logo || "", 500),

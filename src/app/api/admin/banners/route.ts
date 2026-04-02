@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSiteContent, updateSiteContent } from "@/lib/store";
 import { authenticateRequest } from "@/lib/auth";
+import { sanitize } from "@/lib/validate";
 import { logger } from "@/lib/logger";
 
 function unauthorized() {
@@ -32,7 +33,20 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const content = updateSiteContent(body);
+    // Whitelist and sanitize allowed fields
+    const allowedFields: Record<string, number> = {
+      heroTitle: 200, heroSubtitle: 500, heroCta: 50, bannerImage: 500,
+      aboutText: 2000, contactEmail: 100, contactPhone: 20, contactAddress: 300, whatsappNumber: 20,
+    };
+    const sanitized: Record<string, unknown> = {};
+    for (const [key, maxLen] of Object.entries(allowedFields)) {
+      if (body[key] !== undefined) sanitized[key] = sanitize(body[key], maxLen);
+    }
+    // Handle array fields separately
+    if (body.sliderImages && Array.isArray(body.sliderImages)) {
+      sanitized.sliderImages = body.sliderImages.map((url: string) => sanitize(url, 500));
+    }
+    const content = updateSiteContent(sanitized);
     return NextResponse.json(content);
   } catch (err) {
     logger.error("Failed to update site content", err);

@@ -76,7 +76,17 @@ export function verifyUserRefreshToken(token: string): { userId: string } | null
 export function extractUserFromRequest(request: Request): { userId: string; email: string } | null {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) return null;
-  return verifyUserToken(authHeader.slice(7));
+  const tokenData = verifyUserToken(authHeader.slice(7));
+  if (!tokenData) return null;
+
+  // Check if user is blocked — prevents blocked users from using existing tokens
+  try {
+    const { getUserById } = require("@/lib/store");
+    const user = getUserById(tokenData.userId);
+    if (!user || user.blocked) return null;
+  } catch { /* if store unavailable, allow through */ }
+
+  return tokenData;
 }
 
 // ─── OTP System ───
@@ -153,7 +163,10 @@ export function verifyOTP(identifier: string, code: string, ip?: string): { succ
 
   entry.attempts++;
 
-  if (entry.code !== code) {
+  // Timing-safe comparison to prevent side-channel attacks
+  const codeMatch = entry.code.length === code.length &&
+    crypto.timingSafeEqual(Buffer.from(entry.code), Buffer.from(code));
+  if (!codeMatch) {
     return { success: false, error: `Invalid OTP. ${5 - entry.attempts} attempts remaining.` };
   }
 

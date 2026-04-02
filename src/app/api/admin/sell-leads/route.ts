@@ -16,11 +16,16 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, ...updates } = body;
-    if (!id) {
+    if (!body.id) {
       return NextResponse.json({ error: "Missing lead ID" }, { status: 400 });
     }
-    const updated = updateSellLead(id, updates);
+    // Whitelist allowed fields only
+    const allowedFields = ["status", "notes", "assignedTo"];
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (body[key] !== undefined) updates[key] = body[key];
+    }
+    const updated = updateSellLead(body.id, updates);
     if (!updated) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }
