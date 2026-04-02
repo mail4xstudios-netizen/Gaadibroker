@@ -48,6 +48,7 @@ export default function Header() {
     { href: "/", label: "Home" },
     { href: "/cars", label: "Buy Cars" },
     { href: "/sell", label: "Sell Car" },
+    { href: "/loan", label: "Loan" },
     { href: "/compare", label: "Compare" },
     { href: "/about", label: "About" },
     { href: "/contact", label: "Contact" },

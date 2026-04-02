@@ -23,7 +23,7 @@ export default function EMICalculator({ carPrice }: { carPrice: number }) {
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">EMI Calculator</h3>
+      <h3 className="text-lg font-bold text-gray-900 mb-4">Loan Calculator</h3>
 
       <div className="space-y-5">
         <div>
@@ -77,7 +77,7 @@ export default function EMICalculator({ carPrice }: { carPrice: number }) {
 
       <div className="mt-6 bg-orange-50 rounded-xl p-4">
         <div className="text-center">
-          <p className="text-sm text-gray-600">Monthly EMI</p>
+          <p className="text-sm text-gray-600">Monthly Loan EMI</p>
           <p className="text-3xl font-bold text-orange-500 mt-1">
             {formatPrice(Math.round(emi))}
           </p>
