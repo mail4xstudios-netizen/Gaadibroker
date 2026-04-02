@@ -76,12 +76,17 @@ export function verifyUserRefreshToken(token: string): { userId: string } | null
 export function extractUserFromRequest(request: Request): { userId: string; email: string } | null {
   const authHeader = request.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) return null;
-  const tokenData = verifyUserToken(authHeader.slice(7));
+  return verifyUserToken(authHeader.slice(7));
+}
+
+// Separate function for blocked user check — call from API routes that need it
+export function extractVerifiedUser(request: Request): { userId: string; email: string } | null {
+  const tokenData = extractUserFromRequest(request);
   if (!tokenData) return null;
 
-  // Check if user is blocked — prevents blocked users from using existing tokens
+  // Import dynamically to avoid circular dependency
+  const { getUserById } = require("@/lib/store");
   try {
-    const { getUserById } = require("@/lib/store");
     const user = getUserById(tokenData.userId);
     if (!user || user.blocked) return null;
   } catch { /* if store unavailable, allow through */ }
