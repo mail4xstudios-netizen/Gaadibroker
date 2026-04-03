@@ -48,7 +48,8 @@ export async function POST(request: Request) {
     const safeName = `sell-images/sell-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const bucket = adminStorage.bucket();
+    const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const bucket = adminStorage.bucket(bucketName);
     const fileRef = bucket.file(safeName);
 
     await fileRef.save(buffer, {

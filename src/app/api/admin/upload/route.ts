@@ -53,7 +53,8 @@ export async function POST(request: Request) {
     const fileName = `${folder}/${safeName}-${Date.now()}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const bucket = adminStorage.bucket();
+    const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
+    const bucket = adminStorage.bucket(bucketName);
     const fileRef = bucket.file(fileName);
 
     await fileRef.save(buffer, {
@@ -65,8 +66,9 @@ export async function POST(request: Request) {
 
     const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
     return NextResponse.json({ url }, { status: 201 });
-  } catch (err) {
-    console.error("Upload failed:", err);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("Upload failed:", message, err);
+    return NextResponse.json({ error: "Upload failed", detail: message }, { status: 500 });
   }
 }
