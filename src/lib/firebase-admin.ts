@@ -3,20 +3,35 @@ import { getFirestore } from "firebase-admin/firestore";
 import { getStorage } from "firebase-admin/storage";
 import { getAuth } from "firebase-admin/auth";
 
+function getServiceAccount(): Record<string, string> | null {
+  // Try direct JSON env var first
+  const directKey = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  if (directKey) {
+    try { return JSON.parse(directKey); } catch { /* fall through */ }
+  }
+
+  // Try base64-encoded env var
+  const base64Key = process.env.FIREBASE_SERVICE_ACCOUNT_BASE64;
+  if (base64Key) {
+    try { return JSON.parse(Buffer.from(base64Key, "base64").toString("utf-8")); } catch { /* fall through */ }
+  }
+
+  return null;
+}
+
 function getAdminApp() {
   if (getApps().length) return getApp();
 
-  const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+  const serviceAccount = getServiceAccount();
 
   if (serviceAccount) {
     try {
-      const parsed = JSON.parse(serviceAccount);
       return initializeApp({
-        credential: cert(parsed),
+        credential: cert(serviceAccount),
         storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
       });
     } catch (e) {
-      console.error("Firebase Admin init error:", e);
+      console.error("Firebase Admin init with credentials error:", e);
     }
   }
 

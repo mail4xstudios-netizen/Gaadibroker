@@ -120,9 +120,7 @@ export default function Header() {
 
             <span className="w-px h-6 bg-slate-200" />
 
-            {loading ? (
-              <div className="w-24 h-9 skeleton rounded-lg" />
-            ) : user ? (
+            {user ? (
               <div className="relative">
                 <button
                   onClick={() => setShowUserMenu(!showUserMenu)}
@@ -221,7 +219,7 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 pt-3 border-t border-slate-100 bg-white">
+        <div className="absolute bottom-0 left-0 right-0 px-4 pb-8 pt-3 border-t border-slate-100 bg-white">
           {user ? (
             <div className="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg">
               <div className="flex items-center gap-2.5">
