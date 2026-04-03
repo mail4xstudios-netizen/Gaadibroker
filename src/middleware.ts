@@ -17,13 +17,8 @@ export function middleware(request: NextRequest) {
     "max-age=31536000; includeSubDomains; preload"
   );
 
-  // Only apply CSP in production (it breaks Next.js HMR/webpack in dev)
-  if (!isDev) {
-    response.headers.set(
-      "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https:; frame-src 'self' https://*.firebaseapp.com https://accounts.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
-    );
-  }
+  // CSP disabled — was blocking Next.js scripts/styles on Hostinger
+  // TODO: Re-enable with proper nonce-based CSP when ready
 
   // ─── CORS for API routes ───
   if (pathname.startsWith("/api/")) {
