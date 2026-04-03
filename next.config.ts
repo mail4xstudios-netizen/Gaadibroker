@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Force unique build ID to bust Hostinger cache
+  generateBuildId: async () => `build-${Date.now()}`,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
