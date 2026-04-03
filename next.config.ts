@@ -1,8 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Force unique build ID to bust Hostinger cache
-  generateBuildId: async () => `build-${Date.now()}`,
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
@@ -28,6 +26,14 @@ const nextConfig: NextConfig = {
   // Headers for caching and security
   async headers() {
     return [
+      {
+        // HTML pages — never cache (prevents CDN serving stale HTML with old chunk refs)
+        source: "/((?!_next/static|_next/image|brands|cars|images).*)",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Pragma", value: "no-cache" },
+        ],
+      },
       {
         source: "/brands/:path*",
         headers: [
