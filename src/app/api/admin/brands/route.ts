@@ -15,7 +15,7 @@ function badRequest(msg: string) {
 export async function GET(request: Request) {
   if (!authenticateRequest(request)) return unauthorized();
   try {
-    return NextResponse.json(getBrands());
+    return NextResponse.json(await getBrands());
   } catch (err) {
     logger.error("Failed to get brands", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const brand = addBrand({
+    const brand = await addBrand({
       id: crypto.randomUUID(),
       name: sanitize(body.name, 100),
       slug: sanitize(body.slug, 50).toLowerCase().replace(/[^a-z0-9-]/g, "-"),
@@ -69,7 +69,7 @@ export async function PUT(request: Request) {
     if (updates.slug) updates.slug = sanitize(updates.slug, 50).toLowerCase().replace(/[^a-z0-9-]/g, "-");
     if (updates.logo) updates.logo = sanitize(updates.logo, 500);
 
-    const brand = updateBrand(id, updates);
+    const brand = await updateBrand(id, updates);
     if (!brand) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(brand);
   } catch (err) {
@@ -91,7 +91,7 @@ export async function DELETE(request: Request) {
   if (!body.id) return badRequest("Brand ID is required");
 
   try {
-    const deleted = deleteBrand(body.id);
+    const deleted = await deleteBrand(body.id);
     if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (err) {

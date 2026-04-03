@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    const cars = getCars();
+    const cars = await getCars();
     return NextResponse.json(cars);
   } catch (err) {
     logger.error("Failed to get cars", err);

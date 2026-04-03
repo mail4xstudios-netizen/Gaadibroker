@@ -11,7 +11,7 @@ function unauthorized() {
 export async function GET(request: Request) {
   if (!authenticateRequest(request)) return unauthorized();
   try {
-    return NextResponse.json(getSiteContent());
+    return NextResponse.json(await getSiteContent());
   } catch (err) {
     logger.error("Failed to get site content", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -46,7 +46,7 @@ export async function PUT(request: Request) {
     if (body.sliderImages && Array.isArray(body.sliderImages)) {
       sanitized.sliderImages = body.sliderImages.map((url: string) => sanitize(url, 500));
     }
-    const content = updateSiteContent(sanitized);
+    const content = await updateSiteContent(sanitized);
     return NextResponse.json(content);
   } catch (err) {
     logger.error("Failed to update site content", err);

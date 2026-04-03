@@ -15,7 +15,7 @@ function badRequest(msg: string) {
 export async function GET(request: Request) {
   if (!authenticateRequest(request)) return unauthorized();
   try {
-    return NextResponse.json(getCars());
+    return NextResponse.json(await getCars());
   } catch (err) {
     logger.error("Failed to get cars", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const car = addCar({
+    const car = await addCar({
       ...body,
       name: sanitize(body.name, 200),
       brand: sanitize(body.brand, 100),
@@ -80,7 +80,7 @@ export async function PUT(request: Request) {
     if (updates.model) updates.model = sanitize(updates.model as string, 100);
     if (updates.description) updates.description = sanitize(updates.description as string, 2000);
 
-    const car = updateCar(body.id, updates);
+    const car = await updateCar(body.id, updates);
     if (!car) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(car);
   } catch (err) {
@@ -102,7 +102,7 @@ export async function DELETE(request: Request) {
   if (!body.id) return badRequest("Car ID is required");
 
   try {
-    const deleted = deleteCar(body.id);
+    const deleted = await deleteCar(body.id);
     if (!deleted) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ success: true });
   } catch (err) {

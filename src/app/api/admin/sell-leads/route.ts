@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   if (!authenticateRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  return NextResponse.json(getSellLeads());
+  return NextResponse.json(await getSellLeads());
 }
 
 export async function PATCH(request: Request) {
@@ -25,7 +25,7 @@ export async function PATCH(request: Request) {
     for (const key of allowedFields) {
       if (body[key] !== undefined) updates[key] = body[key];
     }
-    const updated = updateSellLead(body.id, updates);
+    const updated = await updateSellLead(body.id, updates);
     if (!updated) {
       return NextResponse.json({ error: "Lead not found" }, { status: 404 });
     }

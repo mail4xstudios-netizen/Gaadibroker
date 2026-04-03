@@ -2,30 +2,22 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
+  const { user, loading, signInWithGoogle, signOut } = useAuth();
 
   useEffect(() => {
-    setMounted(true);
-    const userData = sessionStorage.getItem("user_data");
-    if (userData) {
-      try { setUser(JSON.parse(userData)); } catch { /* ignore */ }
-    }
-
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
@@ -35,13 +27,9 @@ export default function Header() {
     return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
-  const handleLogout = () => {
-    sessionStorage.removeItem("user_token");
-    sessionStorage.removeItem("user_refresh_token");
-    sessionStorage.removeItem("user_data");
-    setUser(null);
+  const handleLogout = async () => {
+    await signOut();
     setShowUserMenu(false);
-    router.refresh();
   };
 
   const navLinks = [
@@ -58,6 +46,10 @@ export default function Header() {
     if (href === "/") return pathname === "/";
     return pathname.startsWith(href);
   };
+
+  const displayName = user?.displayName || "User";
+  const displayEmail = user?.email || "";
+  const avatarUrl = user?.photoURL;
 
   return (
     <header className={`sticky top-0 z-50 transition-colors duration-300 ${
@@ -93,16 +85,10 @@ export default function Header() {
       {/* Main nav */}
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-14 md:h-[68px]">
-          {/* Logo */}
           <Link href="/" className="flex items-center group">
-            <img
-              src="/images/logo-v2.png"
-              alt="GaadiBroker"
-              className="h-[5rem] md:h-[8rem] w-auto"
-            />
+            <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-[5rem] md:h-[8rem] w-auto" />
           </Link>
 
-          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-0.5">
             {navLinks.map((link) => (
               <Link
@@ -134,7 +120,7 @@ export default function Header() {
 
             <span className="w-px h-6 bg-slate-200" />
 
-            {!mounted ? (
+            {loading ? (
               <div className="w-24 h-9 skeleton rounded-lg" />
             ) : user ? (
               <div className="relative">
@@ -142,10 +128,14 @@ export default function Header() {
                   onClick={() => setShowUserMenu(!showUserMenu)}
                   className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-sm">
-                    <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
-                  </div>
-                  <span className="text-sm font-medium text-slate-700 max-w-[80px] truncate">{user.name.split(" ")[0]}</span>
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-sm">
+                      <span className="text-white font-bold text-xs">{displayName.charAt(0).toUpperCase()}</span>
+                    </div>
+                  )}
+                  <span className="text-sm font-medium text-slate-700 max-w-[80px] truncate">{displayName.split(" ")[0]}</span>
                   <svg className={`w-3.5 h-3.5 text-slate-400 transition-transform ${showUserMenu ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
                 </button>
                 {showUserMenu && (
@@ -153,8 +143,8 @@ export default function Header() {
                     <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)} />
                     <div className="absolute right-0 top-full mt-2 w-52 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-fade-in-up">
                       <div className="px-4 py-3 border-b border-slate-100">
-                        <p className="text-sm font-semibold text-slate-900">{user.name}</p>
-                        <p className="text-xs text-slate-500 truncate mt-0.5">{user.email}</p>
+                        <p className="text-sm font-semibold text-slate-900">{displayName}</p>
+                        <p className="text-xs text-slate-500 truncate mt-0.5">{displayEmail}</p>
                       </div>
                       <button
                         onClick={handleLogout}
@@ -168,9 +158,9 @@ export default function Header() {
                 )}
               </div>
             ) : (
-              <Link href="/auth" className="btn-primary text-sm !px-5 !py-2">
-                Login / Sign Up
-              </Link>
+              <button onClick={signInWithGoogle} className="btn-primary text-sm !px-5 !py-2">
+                Sign in with Google
+              </button>
             )}
           </div>
 
@@ -189,8 +179,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile Menu - Slide from right */}
-      {/* Overlay */}
+      {/* Mobile Menu */}
       <div
         className={`md:hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
           mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -198,27 +187,20 @@ export default function Header() {
         onClick={() => setMobileOpen(false)}
       />
 
-      {/* Drawer */}
       <div
         className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        {/* Drawer header */}
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100">
           <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-5 w-auto" />
-          <button
-            onClick={() => setMobileOpen(false)}
-            className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-            aria-label="Close menu"
-          >
+          <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close menu">
             <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
 
-        {/* Nav links */}
         <nav className="px-4 py-4 space-y-0.5">
           {navLinks.map((link) => (
             <Link
@@ -239,28 +221,30 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* User section at bottom */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-6 pt-3 border-t border-slate-100 bg-white">
           {user ? (
             <div className="flex items-center justify-between px-4 py-3 bg-slate-50 rounded-lg">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-xs">{user.name.charAt(0).toUpperCase()}</span>
-                </div>
-                <span className="text-sm font-medium text-slate-700">{user.name}</span>
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center">
+                    <span className="text-white font-bold text-xs">{displayName.charAt(0).toUpperCase()}</span>
+                  </div>
+                )}
+                <span className="text-sm font-medium text-slate-700">{displayName.split(" ")[0]}</span>
               </div>
               <button onClick={() => { handleLogout(); setMobileOpen(false); }} className="text-sm text-red-600 font-medium">
                 Sign Out
               </button>
             </div>
           ) : (
-            <Link
-              href="/auth"
-              onClick={() => setMobileOpen(false)}
-              className="block text-center btn-primary"
+            <button
+              onClick={() => { signInWithGoogle(); setMobileOpen(false); }}
+              className="block w-full text-center btn-primary"
             >
-              Login / Sign Up
-            </Link>
+              Sign in with Google
+            </button>
           )}
         </div>
       </div>

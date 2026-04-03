@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
-import { writeFileSync, mkdirSync, existsSync } from "fs";
-import path from "path";
+import { adminStorage } from "@/lib/firebase-admin";
 
 // Map MIME types to safe extensions — derive extension from type, not filename
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
   "image/webp": "webp",
-  // SVG removed — can contain XSS via <script> tags
 };
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FOLDERS = ["brands", "uploads", "cars"];
@@ -41,12 +39,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Validate folder
     if (!ALLOWED_FOLDERS.includes(folder)) {
       return NextResponse.json({ error: "Invalid upload folder" }, { status: 400 });
     }
 
-    // Derive safe extension from validated MIME type, not user-supplied filename
     const ext = ALLOWED_TYPES[file.type];
     const safeName = file.name
       .replace(/\.[^.]+$/, "")
@@ -54,27 +50,23 @@ export async function POST(request: Request) {
       .replace(/[^a-z0-9-]/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
-    const fileName = `${safeName}-${Date.now()}.${ext}`;
+    const fileName = `${folder}/${safeName}-${Date.now()}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const safeDir = path.join(process.cwd(), "public", folder);
+    const bucket = adminStorage.bucket();
+    const fileRef = bucket.file(fileName);
 
-    // Ensure directory exists
-    if (!existsSync(safeDir)) {
-      mkdirSync(safeDir, { recursive: true });
-    }
+    await fileRef.save(buffer, {
+      metadata: { contentType: file.type },
+    });
 
-    const filePath = path.join(safeDir, fileName);
+    // Make the file publicly accessible
+    await fileRef.makePublic();
 
-    // Prevent path traversal
-    if (!filePath.startsWith(safeDir)) {
-      return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
-    }
-
-    writeFileSync(filePath, buffer);
-
-    return NextResponse.json({ url: `/${folder}/${fileName}` }, { status: 201 });
-  } catch {
+    const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    return NextResponse.json({ url }, { status: 201 });
+  } catch (err) {
+    console.error("Upload failed:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

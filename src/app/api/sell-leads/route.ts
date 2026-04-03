@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const lead = addSellLead({
+    const lead = await addSellLead({
       id: Date.now().toString(),
       userId: sanitize(body.userId || "", 50),
       userName: sanitize(body.userName, 100),

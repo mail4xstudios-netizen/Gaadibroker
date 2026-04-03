@@ -1,17 +1,17 @@
 import { NextResponse } from "next/server";
-import { getUserById, updateUser } from "@/lib/store";
-import { extractUserFromRequest, hashUserPassword, verifyUserPassword } from "@/lib/user-auth";
+import { getUserById, updateUser, addUser } from "@/lib/store";
+import { extractFirebaseUser } from "@/lib/user-auth";
 import { sanitize, isValidPhone } from "@/lib/validate";
 import { rateLimit } from "@/lib/rate-limit";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: Request) {
-  const auth = extractUserFromRequest(request);
+  const auth = await extractFirebaseUser(request);
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const user = getUserById(auth.userId);
+  const user = await getUserById(auth.userId);
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
@@ -24,14 +24,12 @@ export async function GET(request: Request) {
     role: user.role,
     avatar: user.avatar,
     city: user.city,
-    emailVerified: user.emailVerified,
-    phoneVerified: user.phoneVerified,
     createdAt: user.createdAt,
   });
 }
 
 export async function PUT(request: Request) {
-  const auth = extractUserFromRequest(request);
+  const auth = await extractFirebaseUser(request);
   if (!auth) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
@@ -48,9 +46,29 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const user = getUserById(auth.userId);
+  // Check if user exists; if not, create them (first sign-in via Google)
+  let user = await getUserById(auth.userId);
   if (!user) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 });
+    try {
+      user = await addUser({
+        id: auth.userId,
+        name: sanitize(body.name || "", 100),
+        email: auth.email,
+        phone: "",
+        role: "user",
+        avatar: sanitize(body.avatar || "", 500),
+        city: "",
+        blocked: false,
+        emailVerified: true,
+        phoneVerified: false,
+        loginCount: 1,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    } catch (err) {
+      logger.error("Failed to create user profile", err);
+      return NextResponse.json({ error: "Failed to create profile" }, { status: 500 });
+    }
   }
 
   const updates: Record<string, unknown> = {};
@@ -65,24 +83,23 @@ export async function PUT(request: Request) {
   if (body.city) updates.city = sanitize(body.city, 50);
   if (body.avatar) updates.avatar = sanitize(body.avatar, 500);
 
-  // Password change — requires current password verification
-  if (body.newPassword) {
-    if (!body.currentPassword) {
-      return NextResponse.json({ error: "Current password is required to change password" }, { status: 400 });
-    }
-    if (!verifyUserPassword(body.currentPassword, user.passwordHash || "", user.passwordSalt || "")) {
-      return NextResponse.json({ error: "Current password is incorrect" }, { status: 403 });
-    }
-    if (body.newPassword.length < 8) {
-      return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
-    }
-    const { hash, salt } = hashUserPassword(body.newPassword);
-    updates.passwordHash = hash;
-    updates.passwordSalt = salt;
+  if (Object.keys(updates).length === 0) {
+    return NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        avatar: user.avatar,
+        city: user.city,
+      },
+    });
   }
 
   try {
-    const updated = updateUser(auth.userId, updates);
+    const updated = await updateUser(auth.userId, updates);
     if (!updated) {
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
@@ -97,8 +114,6 @@ export async function PUT(request: Request) {
         role: updated.role,
         avatar: updated.avatar,
         city: updated.city,
-        emailVerified: updated.emailVerified,
-        phoneVerified: updated.phoneVerified,
       },
     });
   } catch (err) {

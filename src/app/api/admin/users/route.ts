@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   if (!authenticateRequest(request)) return unauthorized();
 
   try {
-    const users = getUsers().map((u) => ({
+    const users = (await getUsers()).map((u) => ({
       id: u.id,
       name: u.name,
       email: u.email,
@@ -51,7 +51,7 @@ export async function PUT(request: Request) {
   }
 
   try {
-    const user = getUserById(body.id);
+    const user = await getUserById(body.id);
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
@@ -60,7 +60,7 @@ export async function PUT(request: Request) {
     if (typeof body.blocked === "boolean") updates.blocked = body.blocked;
     if (body.role && ["user", "seller", "admin"].includes(body.role)) updates.role = body.role;
 
-    const updated = updateUser(body.id, updates);
+    const updated = await updateUser(body.id, updates);
     if (!updated) {
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
@@ -88,7 +88,7 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    const deleted = deleteUser(body.id);
+    const deleted = await deleteUser(body.id);
     if (!deleted) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }

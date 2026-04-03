@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { getCars } from "@/lib/store";
 import { cities, brands } from "@/lib/data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gaadibroker.com";
   const now = new Date();
 
@@ -21,7 +21,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // Car detail pages
   let carPages: MetadataRoute.Sitemap = [];
   try {
-    const cars = getCars();
+    const cars = await getCars();
     carPages = cars.map((car) => ({
       url: `${baseUrl}/cars/${car.id}`,
       lastModified: new Date(car.createdAt),

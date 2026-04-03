@@ -10,7 +10,7 @@ function unauthorized() {
 export async function GET(request: Request) {
   if (!authenticateRequest(request)) return unauthorized();
   try {
-    return NextResponse.json(getLeads());
+    return NextResponse.json(await getLeads());
   } catch (err) {
     logger.error("Failed to get leads", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -38,7 +38,7 @@ export async function PUT(request: Request) {
       if (!validStatuses.includes(body.status)) {
         return NextResponse.json({ error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` }, { status: 400 });
       }
-      const lead = updateLeadStatus(body.id, body.status);
+      const lead = await updateLeadStatus(body.id, body.status);
       if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
       return NextResponse.json(lead);
     }
@@ -49,7 +49,7 @@ export async function PUT(request: Request) {
     for (const key of allowedFields) {
       if (body[key] !== undefined) updates[key] = body[key];
     }
-    const lead = updateLead(body.id, updates);
+    const lead = await updateLead(body.id, updates);
     if (!lead) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json(lead);
   } catch (err) {

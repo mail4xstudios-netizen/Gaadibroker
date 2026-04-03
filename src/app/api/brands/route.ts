@@ -11,7 +11,7 @@ export async function GET(request: Request) {
   }
 
   try {
-    return NextResponse.json(getBrands());
+    return NextResponse.json(await getBrands());
   } catch (err) {
     logger.error("Failed to get brands", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

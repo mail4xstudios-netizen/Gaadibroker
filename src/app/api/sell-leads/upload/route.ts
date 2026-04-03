@@ -1,8 +1,7 @@
 import { NextResponse } from "next/server";
-import { writeFileSync, mkdirSync, existsSync } from "fs";
-import path from "path";
-import { extractUserFromRequest } from "@/lib/user-auth";
+import { extractFirebaseUser } from "@/lib/user-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
+import { adminStorage } from "@/lib/firebase-admin";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
@@ -12,13 +11,11 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: Request) {
-  // Require user authentication
-  const user = extractUserFromRequest(request);
+  const user = await extractFirebaseUser(request);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
   }
 
-  // Rate limit: 10 uploads per minute per user
   const ip = getClientIp(request);
   const { success: rlOk } = rateLimit(`sell-upload:${user.userId}:${ip}`, { limit: 10, windowMs: 60_000 });
   if (!rlOk) {
@@ -47,25 +44,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Derive extension from validated MIME type, not filename
     const ext = ALLOWED_TYPES[file.type];
-    const safeName = `sell-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const safeName = `sell-images/sell-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const uploadDir = path.join(process.cwd(), "public", "sell-images");
+    const bucket = adminStorage.bucket();
+    const fileRef = bucket.file(safeName);
 
-    if (!existsSync(uploadDir)) {
-      mkdirSync(uploadDir, { recursive: true });
-    }
+    await fileRef.save(buffer, {
+      metadata: { contentType: file.type },
+    });
 
-    const filePath = path.join(uploadDir, safeName);
-    if (!filePath.startsWith(uploadDir)) {
-      return NextResponse.json({ error: "Invalid file path" }, { status: 400 });
-    }
+    await fileRef.makePublic();
 
-    writeFileSync(filePath, buffer);
-
-    return NextResponse.json({ url: `/sell-images/${safeName}` }, { status: 201 });
+    const url = `https://storage.googleapis.com/${bucket.name}/${safeName}`;
+    return NextResponse.json({ url }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }

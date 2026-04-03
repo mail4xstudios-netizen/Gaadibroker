@@ -1,146 +1,94 @@
-import { Car, Lead, Brand, User, SellLead, sampleCars, brands as defaultBrands } from "./data";
-import fs from "fs";
-import path from "path";
+import { Car, Lead, Brand, User, SellLead, brands as defaultBrands } from "./data";
+import { adminDb } from "./firebase-admin";
 import { logger } from "./logger";
 
-// Determine writable data directory
-function getDataDir(): string {
-  const dirs = [
-    path.join(process.cwd(), "src/data"),
-    path.join(process.cwd(), ".data"),
-    path.join("/tmp", "gaadibroker-data"),
-  ];
-  for (const dir of dirs) {
-    try {
-      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-      // Test write
-      const testFile = path.join(dir, ".write-test");
-      fs.writeFileSync(testFile, "ok");
-      fs.unlinkSync(testFile);
-      return dir;
-    } catch { /* try next */ }
-  }
-  return dirs[0]; // fallback
+// ─── Firestore helpers ───
+function collection(name: string) {
+  return adminDb.collection(name);
 }
-let _dataDir: string | null = null;
-const DATA_DIR = (() => {
-  if (!_dataDir) _dataDir = getDataDir();
-  return _dataDir;
-})();
-const SOURCE_DATA_DIR = path.join(process.cwd(), "src/data");
 
-function ensureDataDir() {
+async function getAllDocs<T>(collectionName: string): Promise<T[]> {
+  const snapshot = await collection(collectionName).get();
+  return snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id } as T));
+}
+
+// ─── Cars CRUD ───
+export async function getCars(): Promise<Car[]> {
   try {
-    if (!fs.existsSync(DATA_DIR)) {
-      fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
-    // Copy source data files if data dir is different from source
-    if (DATA_DIR !== SOURCE_DATA_DIR && fs.existsSync(SOURCE_DATA_DIR)) {
-      const files = fs.readdirSync(SOURCE_DATA_DIR);
-      for (const file of files) {
-        const dest = path.join(DATA_DIR, file);
-        if (!fs.existsSync(dest)) {
-          const src = path.join(SOURCE_DATA_DIR, file);
-          fs.copyFileSync(src, dest);
-        }
-      }
-    }
+    return await getAllDocs<Car>("cars");
   } catch (err) {
-    logger.error("Failed to create data directory", err);
+    logger.error("Failed to get cars", err);
+    return [];
   }
 }
 
-function readJson<T>(filename: string, defaultValue: T): T {
-  ensureDataDir();
-  const filePath = path.join(DATA_DIR, filename);
+export async function getCarById(id: string): Promise<Car | undefined> {
   try {
-    if (!fs.existsSync(filePath)) {
-      fs.writeFileSync(filePath, JSON.stringify(defaultValue, null, 2));
-      return defaultValue;
-    }
-    const content = fs.readFileSync(filePath, "utf-8");
-    return JSON.parse(content);
+    const doc = await collection("cars").doc(id).get();
+    if (!doc.exists) return undefined;
+    return { ...doc.data(), id: doc.id } as Car;
   } catch (err) {
-    logger.error(`Failed to read ${filename}`, err);
-    return defaultValue;
+    logger.error("Failed to get car by id", err);
+    return undefined;
   }
 }
 
-function writeJson<T>(filename: string, data: T): void {
-  ensureDataDir();
-  const filePath = path.join(DATA_DIR, filename);
-  try {
-    // Write to temp file first, then rename (atomic write)
-    const tmpPath = `${filePath}.tmp`;
-    fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2));
-    fs.renameSync(tmpPath, filePath);
-  } catch (err) {
-    logger.error(`Failed to write ${filename}`, err);
-    // Don't throw - gracefully handle read-only filesystems
-  }
-}
-
-export function getCars(): Car[] {
-  return readJson<Car[]>("cars.json", []);
-}
-
-export function getCarById(id: string): Car | undefined {
-  return getCars().find((c) => c.id === id);
-}
-
-export function addCar(car: Car): Car {
-  const cars = getCars();
-  cars.push(car);
-  writeJson("cars.json", cars);
+export async function addCar(car: Car): Promise<Car> {
+  await collection("cars").doc(car.id).set(car);
   return car;
 }
 
-export function updateCar(id: string, updates: Partial<Car>): Car | null {
-  const cars = getCars();
-  const index = cars.findIndex((c) => c.id === id);
-  if (index === -1) return null;
-  cars[index] = { ...cars[index], ...updates };
-  writeJson("cars.json", cars);
-  return cars[index];
+export async function updateCar(id: string, updates: Partial<Car>): Promise<Car | null> {
+  const docRef = collection("cars").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update(updates);
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as Car;
 }
 
-export function deleteCar(id: string): boolean {
-  const cars = getCars();
-  const filtered = cars.filter((c) => c.id !== id);
-  if (filtered.length === cars.length) return false;
-  writeJson("cars.json", filtered);
+export async function deleteCar(id: string): Promise<boolean> {
+  const docRef = collection("cars").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return false;
+  await docRef.delete();
   return true;
 }
 
-export function getLeads(): Lead[] {
-  return readJson<Lead[]>("leads.json", []);
+// ─── Leads CRUD ───
+export async function getLeads(): Promise<Lead[]> {
+  try {
+    return await getAllDocs<Lead>("leads");
+  } catch (err) {
+    logger.error("Failed to get leads", err);
+    return [];
+  }
 }
 
-export function addLead(lead: Lead): Lead {
-  const leads = getLeads();
-  leads.push(lead);
-  writeJson("leads.json", leads);
+export async function addLead(lead: Lead): Promise<Lead> {
+  await collection("leads").doc(lead.id).set(lead);
   return lead;
 }
 
-export function updateLeadStatus(id: string, status: Lead["status"]): Lead | null {
-  const leads = getLeads();
-  const index = leads.findIndex((l) => l.id === id);
-  if (index === -1) return null;
-  leads[index].status = status;
-  writeJson("leads.json", leads);
-  return leads[index];
+export async function updateLeadStatus(id: string, status: Lead["status"]): Promise<Lead | null> {
+  const docRef = collection("leads").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update({ status });
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as Lead;
 }
 
-export function updateLead(id: string, updates: Partial<Lead>): Lead | null {
-  const leads = getLeads();
-  const index = leads.findIndex((l) => l.id === id);
-  if (index === -1) return null;
-  leads[index] = { ...leads[index], ...updates };
-  writeJson("leads.json", leads);
-  return leads[index];
+export async function updateLead(id: string, updates: Partial<Lead>): Promise<Lead | null> {
+  const docRef = collection("leads").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update(updates);
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as Lead;
 }
 
+// ─── Site Content ───
 interface SiteContent {
   heroTitle: string;
   heroSubtitle: string;
@@ -167,104 +115,154 @@ const defaultContent: SiteContent = {
   whatsappNumber: "918108797000",
 };
 
-export function getSiteContent(): SiteContent {
-  return readJson<SiteContent>("content.json", defaultContent);
+export async function getSiteContent(): Promise<SiteContent> {
+  try {
+    const doc = await collection("siteContent").doc("main").get();
+    if (!doc.exists) {
+      await collection("siteContent").doc("main").set(defaultContent);
+      return defaultContent;
+    }
+    return doc.data() as SiteContent;
+  } catch (err) {
+    logger.error("Failed to get site content", err);
+    return defaultContent;
+  }
 }
 
-export function updateSiteContent(updates: Partial<SiteContent>): SiteContent {
-  const content = getSiteContent();
-  const updated = { ...content, ...updates };
-  writeJson("content.json", updated);
-  return updated;
+export async function updateSiteContent(updates: Partial<SiteContent>): Promise<SiteContent> {
+  const docRef = collection("siteContent").doc("main");
+  const doc = await docRef.get();
+  if (!doc.exists) {
+    const content = { ...defaultContent, ...updates };
+    await docRef.set(content);
+    return content;
+  }
+  await docRef.update(updates);
+  const updated = await docRef.get();
+  return updated.data() as SiteContent;
 }
 
-// Brand CRUD
-export function getBrands(): Brand[] {
-  return readJson<Brand[]>("brands.json", defaultBrands);
+// ─── Brands CRUD ───
+export async function getBrands(): Promise<Brand[]> {
+  try {
+    const brands = await getAllDocs<Brand>("brands");
+    if (brands.length === 0) return defaultBrands;
+    return brands;
+  } catch (err) {
+    logger.error("Failed to get brands", err);
+    return defaultBrands;
+  }
 }
 
-export function addBrand(brand: Brand): Brand {
-  const brands = getBrands();
-  brands.push(brand);
-  writeJson("brands.json", brands);
+export async function addBrand(brand: Brand): Promise<Brand> {
+  await collection("brands").doc(brand.id).set(brand);
   return brand;
 }
 
-export function updateBrand(id: string, updates: Partial<Brand>): Brand | null {
-  const brands = getBrands();
-  const index = brands.findIndex((b) => b.id === id);
-  if (index === -1) return null;
-  brands[index] = { ...brands[index], ...updates };
-  writeJson("brands.json", brands);
-  return brands[index];
+export async function updateBrand(id: string, updates: Partial<Brand>): Promise<Brand | null> {
+  const docRef = collection("brands").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update(updates);
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as Brand;
 }
 
-export function deleteBrand(id: string): boolean {
-  const brands = getBrands();
-  const filtered = brands.filter((b) => b.id !== id);
-  if (filtered.length === brands.length) return false;
-  writeJson("brands.json", filtered);
+export async function deleteBrand(id: string): Promise<boolean> {
+  const docRef = collection("brands").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return false;
+  await docRef.delete();
   return true;
 }
 
 // ─── User CRUD ───
-export function getUsers(): User[] {
-  return readJson<User[]>("users.json", []);
+export async function getUsers(): Promise<User[]> {
+  try {
+    return await getAllDocs<User>("users");
+  } catch (err) {
+    logger.error("Failed to get users", err);
+    return [];
+  }
 }
 
-export function getUserById(id: string): User | undefined {
-  return getUsers().find((u) => u.id === id);
+export async function getUserById(id: string): Promise<User | undefined> {
+  try {
+    const doc = await collection("users").doc(id).get();
+    if (!doc.exists) return undefined;
+    return { ...doc.data(), id: doc.id } as User;
+  } catch (err) {
+    logger.error("Failed to get user by id", err);
+    return undefined;
+  }
 }
 
-export function getUserByEmail(email: string): User | undefined {
-  return getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
+export async function getUserByEmail(email: string): Promise<User | undefined> {
+  try {
+    const snapshot = await collection("users").where("email", "==", email.toLowerCase()).limit(1).get();
+    if (snapshot.empty) return undefined;
+    const doc = snapshot.docs[0];
+    return { ...doc.data(), id: doc.id } as User;
+  } catch (err) {
+    logger.error("Failed to get user by email", err);
+    return undefined;
+  }
 }
 
-export function getUserByPhone(phone: string): User | undefined {
-  return getUsers().find((u) => u.phone === phone);
+export async function getUserByPhone(phone: string): Promise<User | undefined> {
+  try {
+    const snapshot = await collection("users").where("phone", "==", phone).limit(1).get();
+    if (snapshot.empty) return undefined;
+    const doc = snapshot.docs[0];
+    return { ...doc.data(), id: doc.id } as User;
+  } catch (err) {
+    logger.error("Failed to get user by phone", err);
+    return undefined;
+  }
 }
 
-export function addUser(user: User): User {
-  const users = getUsers();
-  users.push(user);
-  writeJson("users.json", users);
+export async function addUser(user: User): Promise<User> {
+  await collection("users").doc(user.id).set(user);
   return user;
 }
 
-export function updateUser(id: string, updates: Partial<User>): User | null {
-  const users = getUsers();
-  const index = users.findIndex((u) => u.id === id);
-  if (index === -1) return null;
-  users[index] = { ...users[index], ...updates, updatedAt: new Date().toISOString() };
-  writeJson("users.json", users);
-  return users[index];
+export async function updateUser(id: string, updates: Partial<User>): Promise<User | null> {
+  const docRef = collection("users").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update({ ...updates, updatedAt: new Date().toISOString() });
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as User;
 }
 
-export function deleteUser(id: string): boolean {
-  const users = getUsers();
-  const filtered = users.filter((u) => u.id !== id);
-  if (filtered.length === users.length) return false;
-  writeJson("users.json", filtered);
+export async function deleteUser(id: string): Promise<boolean> {
+  const docRef = collection("users").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return false;
+  await docRef.delete();
   return true;
 }
 
 // ─── Sell Leads CRUD ───
-export function getSellLeads(): SellLead[] {
-  return readJson<SellLead[]>("sell-leads.json", []);
+export async function getSellLeads(): Promise<SellLead[]> {
+  try {
+    return await getAllDocs<SellLead>("sellLeads");
+  } catch (err) {
+    logger.error("Failed to get sell leads", err);
+    return [];
+  }
 }
 
-export function addSellLead(lead: SellLead): SellLead {
-  const leads = getSellLeads();
-  leads.push(lead);
-  writeJson("sell-leads.json", leads);
+export async function addSellLead(lead: SellLead): Promise<SellLead> {
+  await collection("sellLeads").doc(lead.id).set(lead);
   return lead;
 }
 
-export function updateSellLead(id: string, updates: Partial<SellLead>): SellLead | null {
-  const leads = getSellLeads();
-  const index = leads.findIndex((l) => l.id === id);
-  if (index === -1) return null;
-  leads[index] = { ...leads[index], ...updates };
-  writeJson("sell-leads.json", leads);
-  return leads[index];
+export async function updateSellLead(id: string, updates: Partial<SellLead>): Promise<SellLead | null> {
+  const docRef = collection("sellLeads").doc(id);
+  const doc = await docRef.get();
+  if (!doc.exists) return null;
+  await docRef.update(updates);
+  const updated = await docRef.get();
+  return { ...updated.data(), id: updated.id } as SellLead;
 }

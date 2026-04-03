@@ -8,7 +8,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const car = getCarById(id);
+    const car = await getCarById(id);
     if (!car) {
       return NextResponse.json({ error: "Car not found" }, { status: 404 });
     }

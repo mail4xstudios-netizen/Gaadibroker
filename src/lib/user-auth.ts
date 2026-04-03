@@ -79,15 +79,31 @@ export function extractUserFromRequest(request: Request): { userId: string; emai
   return verifyUserToken(authHeader.slice(7));
 }
 
+// Firebase ID token verification — used for routes that accept Firebase Auth tokens
+export async function extractFirebaseUser(request: Request): Promise<{ userId: string; email: string } | null> {
+  const authHeader = request.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const token = authHeader.slice(7);
+
+  try {
+    const { adminAuth } = require("@/lib/firebase-admin");
+    const decoded = await adminAuth.verifyIdToken(token);
+    return { userId: decoded.uid, email: decoded.email || "" };
+  } catch {
+    // Fallback: try legacy custom token verification
+    return verifyUserToken(token);
+  }
+}
+
 // Separate function for blocked user check — call from API routes that need it
-export function extractVerifiedUser(request: Request): { userId: string; email: string } | null {
-  const tokenData = extractUserFromRequest(request);
+export async function extractVerifiedUser(request: Request): Promise<{ userId: string; email: string } | null> {
+  // Try Firebase token first, then legacy token
+  const tokenData = await extractFirebaseUser(request);
   if (!tokenData) return null;
 
-  // Import dynamically to avoid circular dependency
   const { getUserById } = require("@/lib/store");
   try {
-    const user = getUserById(tokenData.userId);
+    const user = await getUserById(tokenData.userId);
     if (!user || user.blocked) return null;
   } catch { /* if store unavailable, allow through */ }
 

@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const lead = addLead({
+    const lead = await addLead({
       id: crypto.randomUUID(),
       name: sanitize(body.name, 100),
       phone,
