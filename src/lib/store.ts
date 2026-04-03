@@ -3,7 +3,14 @@ import { adminDb } from "./firebase-admin";
 import { logger } from "./logger";
 
 // ─── Firestore helpers ───
+function isFirestoreReady(): boolean {
+  return adminDb && typeof adminDb.collection === "function";
+}
+
 function collection(name: string) {
+  if (!isFirestoreReady()) {
+    throw new Error("Firestore not initialized");
+  }
   return adminDb.collection(name);
 }
 
@@ -34,11 +41,13 @@ export async function getCarById(id: string): Promise<Car | undefined> {
 }
 
 export async function addCar(car: Car): Promise<Car> {
+  if (!isFirestoreReady()) throw new Error("Firestore not initialized");
   await collection("cars").doc(car.id).set(car);
   return car;
 }
 
 export async function updateCar(id: string, updates: Partial<Car>): Promise<Car | null> {
+  if (!isFirestoreReady()) return null;
   const docRef = collection("cars").doc(id);
   const doc = await docRef.get();
   if (!doc.exists) return null;
@@ -48,6 +57,7 @@ export async function updateCar(id: string, updates: Partial<Car>): Promise<Car 
 }
 
 export async function deleteCar(id: string): Promise<boolean> {
+  if (!isFirestoreReady()) return false;
   const docRef = collection("cars").doc(id);
   const doc = await docRef.get();
   if (!doc.exists) return false;

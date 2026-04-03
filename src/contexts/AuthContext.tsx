@@ -1,8 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { auth } from "@/lib/firebase";
-import { onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut, User as FirebaseUser } from "firebase/auth";
+import { User as FirebaseUser } from "firebase/auth";
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -23,34 +22,66 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      setUser(firebaseUser);
-      setLoading(false);
-    });
-    return () => unsubscribe();
+    let unsubscribe: (() => void) | undefined;
+
+    async function initAuth() {
+      try {
+        const { auth } = await import("@/lib/firebase");
+        const { onAuthStateChanged } = await import("firebase/auth");
+
+        if (auth && typeof auth.onAuthStateChanged === "function") {
+          unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            setUser(firebaseUser);
+            setLoading(false);
+          });
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        console.error("Auth init error:", e);
+        setLoading(false);
+      }
+    }
+
+    initAuth();
+    return () => unsubscribe?.();
   }, []);
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
+    try {
+      const { auth } = await import("@/lib/firebase");
+      const { signInWithPopup, GoogleAuthProvider } = await import("firebase/auth");
 
-    // Create/update user profile in Firestore via API
-    const token = await result.user.getIdToken();
-    await fetch("/api/user/me", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        name: result.user.displayName || "",
-        avatar: result.user.photoURL || "",
-      }),
-    });
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+
+      // Create/update user profile in Firestore via API
+      const token = await result.user.getIdToken();
+      await fetch("/api/user/me", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          name: result.user.displayName || "",
+          avatar: result.user.photoURL || "",
+        }),
+      });
+    } catch (e) {
+      console.error("Google sign-in error:", e);
+      throw e;
+    }
   };
 
   const signOut = async () => {
-    await firebaseSignOut(auth);
+    try {
+      const { auth } = await import("@/lib/firebase");
+      const { signOut: firebaseSignOut } = await import("firebase/auth");
+      await firebaseSignOut(auth);
+    } catch (e) {
+      console.error("Sign out error:", e);
+    }
   };
 
   return (
