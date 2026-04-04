@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 import { extractFirebaseUser } from "@/lib/user-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
-import { adminStorage } from "@/lib/firebase-admin";
+import { uploadToR2, isR2Ready } from "@/lib/cloudflare-r2";
+import { convertToWebP } from "@/lib/image-convert";
 
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
@@ -14,6 +15,13 @@ export async function POST(request: Request) {
   const user = await extractFirebaseUser(request);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
+  }
+
+  if (!isR2Ready()) {
+    return NextResponse.json(
+      { error: "Image storage not configured." },
+      { status: 503 }
+    );
   }
 
   const ip = getClientIp(request);
@@ -44,21 +52,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const ext = ALLOWED_TYPES[file.type];
-    const safeName = `sell-images/sell-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-    const bucket = adminStorage.bucket(bucketName);
-    const fileRef = bucket.file(safeName);
+    // Convert to WebP
+    const { buffer, contentType, ext } = await convertToWebP(rawBuffer, file.type);
 
-    await fileRef.save(buffer, {
-      metadata: { contentType: file.type },
-    });
+    const key = `sell-images/sell-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-    await fileRef.makePublic();
-
-    const url = `https://storage.googleapis.com/${bucket.name}/${safeName}`;
+    const url = await uploadToR2(buffer, key, contentType);
     return NextResponse.json({ url }, { status: 201 });
   } catch {
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });

@@ -1,35 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthPage() {
   const router = useRouter();
-  const { user, loading, signInWithGoogle } = useAuth();
-  const [signingIn, setSigningIn] = useState(false);
-  const [error, setError] = useState("");
+  const { user, loading, sendOTP, verifyOTP, otpSent, otpError, setOtpError } = useAuth();
+  const [phone, setPhone] = useState("");
+  const [otp, setOtp] = useState("");
+  const [sending, setSending] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   // Redirect if already signed in
-  useEffect(() => {
-    if (!loading && user) {
-      router.push("/");
-    }
-  }, [user, loading, router]);
-
-  const handleGoogleSignIn = async () => {
-    setSigningIn(true);
-    setError("");
-    try {
-      await signInWithGoogle();
-      router.push("/");
-    } catch (err) {
-      console.error("Google sign-in error:", err);
-      setError("Sign in was cancelled or failed. Please try again.");
-    }
-    setSigningIn(false);
-  };
+  if (!loading && user) {
+    router.push("/");
+    return null;
+  }
 
   if (loading) {
     return (
@@ -39,7 +27,30 @@ export default function AuthPage() {
     );
   }
 
-  if (user) return null;
+  const handleSendOTP = async () => {
+    if (phone.length !== 10) {
+      setOtpError("Please enter a valid 10-digit mobile number");
+      return;
+    }
+    setSending(true);
+    try {
+      await sendOTP(phone, "recaptcha-container");
+    } catch { /* error handled in context */ }
+    setSending(false);
+  };
+
+  const handleVerifyOTP = async () => {
+    if (otp.length !== 6) {
+      setOtpError("Please enter the 6-digit OTP");
+      return;
+    }
+    setVerifying(true);
+    try {
+      await verifyOTP(otp);
+      router.push("/");
+    } catch { /* error handled in context */ }
+    setVerifying(false);
+  };
 
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-8">
@@ -56,51 +67,124 @@ export default function AuthPage() {
         <div className="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden">
           <div className="p-6 sm:p-8">
             <h1 className="text-xl font-extrabold text-slate-900 text-center tracking-tight mb-2">
-              Welcome to GaadiBroker
+              {otpSent ? "Verify OTP" : "Login / Sign Up"}
             </h1>
             <p className="text-slate-500 text-sm text-center mb-8">
-              Sign in to access dealer contacts, save cars, and sell your car
+              {otpSent
+                ? `We've sent a 6-digit OTP to +91 ${phone}`
+                : "Enter your mobile number to continue"}
             </p>
 
-            {/* Benefits */}
-            <div className="space-y-3 mb-8">
-              {[
-                "View dealer contact numbers",
-                "Get best price quotes",
-                "Sell your car easily",
-                "Save cars to wishlist",
-              ].map((benefit) => (
-                <div key={benefit} className="flex items-center gap-3 text-sm text-slate-700">
-                  <span className="w-5 h-5 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
-                      <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
-                    </svg>
-                  </span>
-                  {benefit}
+            {!otpSent ? (
+              <>
+                {/* Benefits */}
+                <div className="space-y-3 mb-8">
+                  {[
+                    "View dealer contact numbers",
+                    "Get best price quotes",
+                    "Sell your car easily",
+                    "Save cars to wishlist",
+                  ].map((benefit) => (
+                    <div key={benefit} className="flex items-center gap-3 text-sm text-slate-700">
+                      <span className="w-5 h-5 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                          <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
+                        </svg>
+                      </span>
+                      {benefit}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
 
-            {/* Google Sign In Button */}
-            <button
-              onClick={handleGoogleSignIn}
-              disabled={signingIn}
-              className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white rounded-xl border-2 border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-all font-semibold text-slate-700 disabled:opacity-50 shadow-sm"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-              </svg>
-              {signingIn ? "Signing in..." : "Continue with Google"}
-            </button>
+                {/* Phone Input */}
+                <div className="mb-4">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Mobile Number</label>
+                  <div className="flex items-center border-2 border-slate-200 rounded-xl overflow-hidden focus-within:border-orange-400 transition-colors">
+                    <span className="px-3 py-3.5 bg-slate-50 text-slate-600 font-semibold text-sm border-r border-slate-200">+91</span>
+                    <input
+                      type="tel"
+                      maxLength={10}
+                      placeholder="Enter 10-digit number"
+                      value={phone}
+                      onChange={(e) => {
+                        setPhone(e.target.value.replace(/\D/g, "").slice(0, 10));
+                        setOtpError("");
+                      }}
+                      onKeyDown={(e) => e.key === "Enter" && handleSendOTP()}
+                      className="flex-1 px-3 py-3.5 text-sm outline-none bg-white text-slate-900 placeholder:text-slate-400"
+                    />
+                  </div>
+                </div>
 
-            {error && (
+                <button
+                  onClick={handleSendOTP}
+                  disabled={sending || phone.length !== 10}
+                  className="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm hover:from-orange-600 hover:to-orange-700 transition-all disabled:opacity-50 shadow-md shadow-orange-200"
+                >
+                  {sending ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Sending OTP...
+                    </span>
+                  ) : (
+                    "Send OTP"
+                  )}
+                </button>
+              </>
+            ) : (
+              <>
+                {/* OTP Input */}
+                <div className="mb-4">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Enter OTP</label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    placeholder="6-digit OTP"
+                    value={otp}
+                    onChange={(e) => {
+                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
+                      setOtpError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && handleVerifyOTP()}
+                    className="w-full px-4 py-3.5 text-center text-2xl font-bold tracking-[0.5em] border-2 border-slate-200 rounded-xl outline-none focus:border-orange-400 transition-colors text-slate-900"
+                    autoFocus
+                  />
+                </div>
+
+                <button
+                  onClick={handleVerifyOTP}
+                  disabled={verifying || otp.length !== 6}
+                  className="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm hover:from-orange-600 hover:to-orange-700 transition-all disabled:opacity-50 shadow-md shadow-orange-200 mb-3"
+                >
+                  {verifying ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      Verifying...
+                    </span>
+                  ) : (
+                    "Verify & Login"
+                  )}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setOtp("");
+                    setOtpError("");
+                    // Reset OTP state to go back to phone entry
+                    window.location.reload();
+                  }}
+                  className="w-full text-center text-sm text-slate-500 hover:text-orange-600 transition-colors"
+                >
+                  Change number / Resend OTP
+                </button>
+              </>
+            )}
+
+            {otpError && (
               <div className="mt-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 <p className="text-red-600 text-sm flex items-center gap-2">
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
-                  {error}
+                  {otpError}
                 </p>
               </div>
             )}
@@ -120,6 +204,9 @@ export default function AuthPage() {
             </p>
           </div>
         </div>
+
+        {/* reCAPTCHA container (invisible) */}
+        <div id="recaptcha-container" />
 
         {/* Bottom link */}
         <div className="text-center mt-6">

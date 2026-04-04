@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Car, Brand, brands as defaultBrands, cities } from "@/lib/data";
 import { adminFetch } from "@/lib/admin-fetch";
 
-const MAX_IMAGES = 7;
+const MAX_IMAGES = 15;
 
 export default function AdminEditCarPage() {
   const params = useParams();

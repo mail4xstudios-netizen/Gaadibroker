@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth";
-import { adminStorage } from "@/lib/firebase-admin";
+import { uploadToR2, isR2Ready } from "@/lib/cloudflare-r2";
+import { convertToWebP } from "@/lib/image-convert";
 
-// Map MIME types to safe extensions — derive extension from type, not filename
 const ALLOWED_TYPES: Record<string, string> = {
   "image/png": "png",
   "image/jpeg": "jpg",
@@ -14,6 +14,13 @@ const ALLOWED_FOLDERS = ["brands", "uploads", "cars"];
 export async function POST(request: Request) {
   if (!authenticateRequest(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  if (!isR2Ready()) {
+    return NextResponse.json(
+      { error: "Image storage not configured. Please set Cloudflare R2 environment variables." },
+      { status: 503 }
+    );
   }
 
   try {
@@ -43,28 +50,20 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid upload folder" }, { status: 400 });
     }
 
-    const ext = ALLOWED_TYPES[file.type];
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+
+    // Convert to WebP
+    const { buffer, contentType, ext } = await convertToWebP(rawBuffer, file.type);
+
     const safeName = file.name
       .replace(/\.[^.]+$/, "")
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, "-")
       .replace(/-+/g, "-")
       .replace(/^-|-$/g, "");
-    const fileName = `${folder}/${safeName}-${Date.now()}.${ext}`;
+    const key = `${folder}/${safeName}-${Date.now()}.${ext}`;
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const bucketName = process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET;
-    const bucket = adminStorage.bucket(bucketName);
-    const fileRef = bucket.file(fileName);
-
-    await fileRef.save(buffer, {
-      metadata: { contentType: file.type },
-    });
-
-    // Make the file publicly accessible
-    await fileRef.makePublic();
-
-    const url = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
+    const url = await uploadToR2(buffer, key, contentType);
     return NextResponse.json({ url }, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);

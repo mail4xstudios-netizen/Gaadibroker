@@ -46,21 +46,21 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  // Check if user exists; if not, create them (first sign-in via Google)
+  // Check if user exists; if not, create them (first sign-in via Phone/Google)
   let user = await getUserById(auth.userId);
   if (!user) {
     try {
       user = await addUser({
         id: auth.userId,
         name: sanitize(body.name || "", 100),
-        email: auth.email,
-        phone: "",
+        email: auth.email || "",
+        phone: body.phone || "",
         role: "user",
         avatar: sanitize(body.avatar || "", 500),
         city: "",
         blocked: false,
-        emailVerified: true,
-        phoneVerified: false,
+        emailVerified: !!auth.email,
+        phoneVerified: !!body.phone,
         loginCount: 1,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
