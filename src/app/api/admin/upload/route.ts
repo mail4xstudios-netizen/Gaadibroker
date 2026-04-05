@@ -12,9 +12,14 @@ const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_FOLDERS = ["brands", "uploads", "cars"];
 
 export async function POST(request: Request) {
+  const authHeader = request.headers.get("Authorization");
+  console.log("Upload auth header:", authHeader ? `Bearer ${authHeader.slice(7, 20)}...` : "MISSING");
+
   if (!authenticateRequest(request)) {
+    console.log("Upload auth FAILED - token invalid or expired");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  console.log("Upload auth OK");
 
   if (!isR2Ready()) {
     return NextResponse.json(

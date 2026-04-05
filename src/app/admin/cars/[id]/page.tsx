@@ -61,8 +61,16 @@ export default function AdminEditCarPage() {
           body: formData,
         });
         const data = await res.json();
-        if (data.url) newUrls.push(data.url);
-      } catch { /* skip */ }
+        if (data.url) {
+          newUrls.push(data.url);
+        } else {
+          console.error("Upload error:", data);
+          alert(`Upload failed: ${data.detail || data.error || "Unknown error"}`);
+        }
+      } catch (err) {
+        console.error("Upload exception:", err);
+        alert("Upload failed. Please try again.");
+      }
     }
 
     update("images", [...currentImages, ...newUrls]);

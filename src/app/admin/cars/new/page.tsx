@@ -62,13 +62,25 @@ export default function AdminNewCarPage() {
       formData.append("folder", "cars");
 
       try {
+        const token = sessionStorage.getItem("admin_token");
+        console.log("Upload token:", token ? `${token.slice(0, 20)}...` : "NO TOKEN");
         const res = await adminFetch("/api/admin/upload", {
           method: "POST",
           body: formData,
         });
+        console.log("Upload response status:", res.status);
         const data = await res.json();
-        if (data.url) newUrls.push(data.url);
-      } catch { /* skip failed */ }
+        console.log("Upload response data:", data);
+        if (data.url) {
+          newUrls.push(data.url);
+        } else {
+          console.error("Upload error:", data);
+          alert(`Upload failed: ${data.detail || data.error || "Unknown error"}`);
+        }
+      } catch (err) {
+        console.error("Upload exception:", err);
+        alert("Upload failed. Please try again.");
+      }
     }
 
     setUploadedImages((prev) => [...prev, ...newUrls]);

@@ -14,7 +14,6 @@ export default function SellPage() {
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const isLoggedIn = !!user;
@@ -34,17 +33,28 @@ export default function SellPage() {
       const formData = new FormData();
       formData.append("file", file);
       try {
-        const token = user ? await user.getIdToken() : "";
+        if (!user) {
+          alert("Please sign in first to upload images");
+          setUploading(false);
+          return;
+        }
+        const token = await user.getIdToken();
         const res = await fetch("/api/sell-leads/upload", {
           method: "POST",
-          headers: token ? { Authorization: `Bearer ${token}` } : {},
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
         const data = await res.json();
         if (data.url) {
           setImages((prev) => [...prev, data.url]);
+        } else {
+          console.error("Sell upload error:", data);
+          alert(`Upload failed: ${data.error || "Unknown error"}`);
         }
-      } catch { /* ignore failed uploads */ }
+      } catch (err) {
+        console.error("Sell upload exception:", err);
+        alert("Upload failed. Please try again.");
+      }
     }
     setUploading(false);
     if (fileRef.current) fileRef.current.value = "";
@@ -56,10 +66,6 @@ export default function SellPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isLoggedIn) {
-      setShowLoginPrompt(true);
-      return;
-    }
     if (images.length === 0) {
       alert("Please upload at least one car image");
       return;
@@ -86,24 +92,47 @@ export default function SellPage() {
     setSubmitted(true);
   };
 
-  // Login prompt modal
-  if (showLoginPrompt) {
+  // Show login screen if not logged in
+  if (!authLoading && !isLoggedIn) {
     return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4 bg-slate-50">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
-            <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+      <div className="bg-slate-50">
+        <section className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-600 to-orange-500" />
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute inset-0" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "32px 32px" }} />
           </div>
-          <h2 className="text-xl font-extrabold text-slate-900 mb-2">Sign In Required</h2>
-          <p className="text-slate-500 text-sm mb-6">Sign in with your mobile number to sell your car. This helps us verify your identity and contact you with offers.</p>
-          <a
-            href="/auth"
-            className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm shadow-md shadow-orange-200 mb-3"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
-            Sign In with Mobile Number
-          </a>
-          <button onClick={() => setShowLoginPrompt(false)} className="text-slate-500 text-sm hover:text-slate-700">Go Back</button>
+          <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-14 md:py-20 text-center">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Sell Your Car</h1>
+            <p className="text-white/80 mt-3 text-base md:text-lg">Get the best price in just 4 easy steps</p>
+          </div>
+        </section>
+        <div className="max-w-md mx-auto px-4 py-12">
+          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
+            <div className="w-16 h-16 bg-orange-50 rounded-2xl flex items-center justify-center mx-auto mb-5">
+              <svg className="w-8 h-8 text-orange-500" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+            </div>
+            <h2 className="text-xl font-extrabold text-slate-900 mb-2">Sign In to Sell Your Car</h2>
+            <p className="text-slate-500 text-sm mb-6">Sign in with your mobile number to get started. This helps us verify your identity and contact you with offers.</p>
+            <div className="space-y-3 mb-6 text-left">
+              {["Upload car photos & details", "Get best price quotes from dealers", "Free doorstep inspection"].map((benefit) => (
+                <div key={benefit} className="flex items-center gap-3 text-sm text-slate-700">
+                  <span className="w-5 h-5 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <path fillRule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clipRule="evenodd" />
+                    </svg>
+                  </span>
+                  {benefit}
+                </div>
+              ))}
+            </div>
+            <a
+              href="/auth"
+              className="w-full flex items-center justify-center gap-2 px-6 py-3.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm shadow-md shadow-orange-200"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" /></svg>
+              Sign In with Mobile Number
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -144,12 +173,6 @@ export default function SellPage() {
         <div className="relative max-w-4xl mx-auto px-4 md:px-6 py-14 md:py-20 text-center">
           <h1 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight">Sell Your Car</h1>
           <p className="text-white/80 mt-3 text-base md:text-lg">Get the best price in just 4 easy steps</p>
-          {!isLoggedIn && !authLoading && (
-            <div className="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 text-white text-sm">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>
-              Sign in required to submit
-            </div>
-          )}
         </div>
       </section>
 
@@ -317,16 +340,9 @@ export default function SellPage() {
                   </div>
                 )}
 
-                {!isLoggedIn && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
-                    <p className="text-amber-800 text-sm font-medium">You must sign in to submit</p>
-                    <a href="/auth" className="text-orange-600 text-sm font-bold underline mt-1 inline-block">Sign in with Mobile</a>
-                  </div>
-                )}
-
                 <div className="flex gap-3 mt-2">
                   <button type="button" onClick={() => setStep(3)} className="flex-1 btn-outline !py-3">Back</button>
-                  <button type="submit" disabled={!isLoggedIn} className="flex-1 btn-primary disabled:opacity-50 !py-3">Submit Request</button>
+                  <button type="submit" className="flex-1 btn-primary !py-3">Submit Request</button>
                 </div>
               </div>
             )}
