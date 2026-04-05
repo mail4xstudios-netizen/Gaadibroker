@@ -1,155 +1,122 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { User as FirebaseUser, ConfirmationResult } from "firebase/auth";
+
+interface AppUser {
+  id: string;
+  name: string;
+  phone: string;
+  role: string;
+  token: string;
+}
 
 interface AuthContextType {
-  user: FirebaseUser | null;
+  user: AppUser | null;
   loading: boolean;
-  sendOTP: (phoneNumber: string, recaptchaContainerId: string) => Promise<void>;
-  verifyOTP: (otp: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  otpSent: boolean;
-  otpError: string;
-  setOtpError: (err: string) => void;
+  signup: (phone: string, password: string, name: string) => Promise<void>;
+  login: (phone: string, password: string) => Promise<void>;
+  signOut: () => void;
+  authError: string;
+  setAuthError: (err: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
-  sendOTP: async () => {},
-  verifyOTP: async () => {},
-  signOut: async () => {},
-  otpSent: false,
-  otpError: "",
-  setOtpError: () => {},
+  signup: async () => {},
+  login: async () => {},
+  signOut: () => {},
+  authError: "",
+  setAuthError: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpError, setOtpError] = useState("");
+  const [authError, setAuthError] = useState("");
 
+  // Load user from localStorage on mount
   useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-
-    async function initAuth() {
-      try {
-        const { auth } = await import("@/lib/firebase");
-        const { onAuthStateChanged } = await import("firebase/auth");
-
-        if (auth && typeof auth.onAuthStateChanged === "function") {
-          unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            setUser(firebaseUser);
-            setLoading(false);
-          });
-        } else {
-          setLoading(false);
+    try {
+      const stored = localStorage.getItem("gb_user");
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (parsed?.token) {
+          setUser(parsed);
         }
-      } catch (e) {
-        console.error("Auth init error:", e);
-        setLoading(false);
       }
-    }
-
-    initAuth();
-    return () => unsubscribe?.();
+    } catch { /* ignore */ }
+    setLoading(false);
   }, []);
 
-  const sendOTP = async (phoneNumber: string, recaptchaContainerId: string) => {
-    setOtpError("");
+  const saveUser = (userData: AppUser) => {
+    setUser(userData);
+    localStorage.setItem("gb_user", JSON.stringify(userData));
+  };
+
+  const signup = async (phone: string, password: string, name: string) => {
+    setAuthError("");
     try {
-      const { auth } = await import("@/lib/firebase");
-      const { RecaptchaVerifier, signInWithPhoneNumber } = await import("firebase/auth");
-
-      // Clean up any existing reCAPTCHA
-      const win = window as unknown as Record<string, unknown>;
-      if (win.recaptchaVerifier) {
-        try {
-          (win.recaptchaVerifier as { clear: () => void }).clear();
-        } catch { /* ignore */ }
-      }
-
-      const recaptchaVerifier = new RecaptchaVerifier(auth, recaptchaContainerId, {
-        size: "invisible",
+      const res = await fetch("/api/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, password, name }),
       });
-      win.recaptchaVerifier = recaptchaVerifier;
-
-      // Ensure phone number has country code
-      const formattedPhone = phoneNumber.startsWith("+") ? phoneNumber : `+91${phoneNumber}`;
-
-      const result = await signInWithPhoneNumber(auth, formattedPhone, recaptchaVerifier);
-      setConfirmationResult(result);
-      setOtpSent(true);
+      const data = await res.json();
+      if (!res.ok) {
+        setAuthError(data.error || "Signup failed");
+        throw new Error(data.error);
+      }
+      saveUser({
+        id: data.user.id,
+        name: data.user.name,
+        phone: data.user.phone,
+        role: data.user.role,
+        token: data.token,
+      });
     } catch (e) {
-      console.error("Send OTP error:", e);
-      const msg = e instanceof Error ? e.message : "Failed to send OTP";
-      if (msg.includes("too-many-requests")) {
-        setOtpError("Too many attempts. Please try again later.");
-      } else if (msg.includes("invalid-phone-number")) {
-        setOtpError("Invalid phone number. Please check and try again.");
-      } else {
-        setOtpError(msg);
+      if (e instanceof Error && !authError) {
+        setAuthError(e.message);
       }
       throw e;
     }
   };
 
-  const verifyOTP = async (otp: string) => {
-    setOtpError("");
-    if (!confirmationResult) {
-      setOtpError("Please request OTP first.");
-      throw new Error("No confirmation result");
-    }
+  const login = async (phone: string, password: string) => {
+    setAuthError("");
     try {
-      const result = await confirmationResult.confirm(otp);
-
-      // Create/update user profile in Firestore
-      const token = await result.user.getIdToken();
-      await fetch("/api/user/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          phone: result.user.phoneNumber || "",
-          name: result.user.displayName || "",
-        }),
+      const res = await fetch("/api/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, password }),
       });
-
-      setOtpSent(false);
-      setConfirmationResult(null);
+      const data = await res.json();
+      if (!res.ok) {
+        setAuthError(data.error || "Login failed");
+        throw new Error(data.error);
+      }
+      saveUser({
+        id: data.user.id,
+        name: data.user.name,
+        phone: data.user.phone,
+        role: data.user.role,
+        token: data.token,
+      });
     } catch (e) {
-      console.error("Verify OTP error:", e);
-      const msg = e instanceof Error ? e.message : "Invalid OTP";
-      if (msg.includes("invalid-verification-code")) {
-        setOtpError("Invalid OTP. Please check and try again.");
-      } else if (msg.includes("code-expired")) {
-        setOtpError("OTP expired. Please request a new one.");
-      } else {
-        setOtpError(msg);
+      if (e instanceof Error && !authError) {
+        setAuthError(e.message);
       }
       throw e;
     }
   };
 
-  const signOut = async () => {
-    try {
-      const { auth } = await import("@/lib/firebase");
-      const { signOut: firebaseSignOut } = await import("firebase/auth");
-      await firebaseSignOut(auth);
-      setOtpSent(false);
-      setConfirmationResult(null);
-    } catch (e) {
-      console.error("Sign out error:", e);
-    }
+  const signOut = () => {
+    setUser(null);
+    localStorage.removeItem("gb_user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, sendOTP, verifyOTP, signOut, otpSent, otpError, setOtpError }}>
+    <AuthContext.Provider value={{ user, loading, signup, login, signOut, authError, setAuthError }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { extractFirebaseUser } from "@/lib/user-auth";
+import { extractFirebaseUser, extractUserFromRequest } from "@/lib/user-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import { uploadToR2, isR2Ready } from "@/lib/cloudflare-r2";
 import { convertToWebP } from "@/lib/image-convert";
@@ -12,7 +12,8 @@ const ALLOWED_TYPES: Record<string, string> = {
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(request: Request) {
-  const user = await extractFirebaseUser(request);
+  // Try custom token first, then Firebase token
+  const user = extractUserFromRequest(request) || await extractFirebaseUser(request);
   if (!user) {
     return NextResponse.json({ error: "Unauthorized. Please log in." }, { status: 401 });
   }
