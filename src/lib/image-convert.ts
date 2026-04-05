@@ -1,8 +1,6 @@
-import sharp from "sharp";
-
 /**
  * Converts PNG/JPEG images to WebP format.
- * If already WebP, returns the original buffer.
+ * Falls back to original format if sharp is unavailable (e.g., on some hosting platforms).
  */
 export async function convertToWebP(
   buffer: Buffer,
@@ -12,13 +10,20 @@ export async function convertToWebP(
     return { buffer, contentType: "image/webp", ext: "webp" };
   }
 
-  const webpBuffer = await sharp(buffer)
-    .webp({ quality: 80 })
-    .toBuffer();
+  try {
+    const sharp = (await import("sharp")).default;
+    const webpBuffer = await sharp(buffer)
+      .webp({ quality: 80 })
+      .toBuffer();
 
-  return {
-    buffer: webpBuffer,
-    contentType: "image/webp",
-    ext: "webp",
-  };
+    return {
+      buffer: webpBuffer,
+      contentType: "image/webp",
+      ext: "webp",
+    };
+  } catch (e) {
+    console.warn("sharp not available, uploading original format:", e);
+    const ext = mimeType === "image/png" ? "png" : "jpg";
+    return { buffer, contentType: mimeType, ext };
+  }
 }
