@@ -33,11 +33,6 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
               </span>
             )}
           </div>
-          {car.originalPrice && (
-            <span className="absolute top-2 md:top-3 right-2 md:right-3 badge badge-discount !text-[0.6rem] md:!text-xs !px-1.5 md:!px-2 !py-0.5 md:!py-1">
-              {Math.round(((car.originalPrice - car.price) / car.originalPrice) * 100)}% OFF
-            </span>
-          )}
 
           {/* Year badge bottom-left */}
           <span className="absolute bottom-2 md:bottom-3 left-2 md:left-3 text-white text-[0.65rem] md:text-xs font-semibold bg-black/40 backdrop-blur-sm px-1.5 md:px-2 py-0.5 rounded">
@@ -76,11 +71,6 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
               <p className="text-sm md:text-xl font-extrabold text-orange-600 tracking-tight">
                 {formatPrice(car.price)}
               </p>
-              {car.originalPrice && (
-                <p className="text-[0.6rem] md:text-[0.6875rem] text-slate-400 line-through">
-                  {formatPrice(car.originalPrice)}
-                </p>
-              )}
             </div>
             <span className="text-orange-600 text-xs font-semibold items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
               View
