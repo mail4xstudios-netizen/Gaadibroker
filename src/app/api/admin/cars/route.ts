@@ -70,7 +70,7 @@ export async function PUT(request: Request) {
     // Whitelist and sanitize allowed fields
     const allowedFields = ["name", "brand", "model", "year", "price", "originalPrice", "fuelType",
       "transmission", "kmDriven", "ownerType", "location", "city", "features", "description",
-      "color", "registration", "insurance", "images", "featured"];
+      "color", "registration", "insurance", "images", "featured", "status"];
     const updates: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (body[key] !== undefined) updates[key] = body[key];

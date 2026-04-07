@@ -36,8 +36,7 @@ export default function AdminCarsPage() {
     fetchCars();
   };
 
-  const toggleSold = async (car: Car) => {
-    const newStatus = car.status === "sold" ? "available" : "sold";
+  const updateStatus = async (car: Car, newStatus: string) => {
     await adminFetch("/api/admin/cars", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -109,14 +108,18 @@ export default function AdminCarsPage() {
                   <td className="px-4 py-3 text-sm text-gray-700 hidden md:table-cell">{car.fuelType}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 hidden lg:table-cell">{car.city}</td>
                   <td className="px-4 py-3">
-                    <button
-                      onClick={() => toggleSold(car)}
-                      className={`text-xs px-2 py-1 rounded-full font-medium ${
-                        car.status === "sold" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                    <select
+                      value={car.status || "available"}
+                      onChange={(e) => updateStatus(car, e.target.value)}
+                      className={`text-xs px-2 py-1.5 rounded-lg font-medium border cursor-pointer focus:outline-none focus:ring-2 focus:ring-orange-500 ${
+                        car.status === "sold"
+                          ? "bg-red-50 text-red-700 border-red-200"
+                          : "bg-green-50 text-green-700 border-green-200"
                       }`}
                     >
-                      {car.status === "sold" ? "Sold" : "Available"}
-                    </button>
+                      <option value="available">Available</option>
+                      <option value="sold">Sold</option>
+                    </select>
                   </td>
                   <td className="px-4 py-3">
                     <button
