@@ -149,8 +149,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-      {/* Sidebar */}
-      <aside className={`fixed md:sticky md:top-0 inset-y-0 left-0 z-50 w-64 h-screen bg-gray-900 transform ${
+      {/* Sidebar - fixed on all screens */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 transform ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       } md:translate-x-0 transition-transform overflow-y-auto`}>
         <div className="p-6">
@@ -199,8 +199,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         />
       )}
 
-      {/* Main content */}
-      <div className="flex-1 min-w-0">
+      {/* Main content - offset by sidebar width on desktop */}
+      <div className="flex-1 min-w-0 md:ml-64">
         <header className="bg-white shadow-sm px-4 md:px-6 py-4 flex items-center justify-between sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
