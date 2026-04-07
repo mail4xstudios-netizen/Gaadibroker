@@ -36,6 +36,16 @@ export default function AdminCarsPage() {
     fetchCars();
   };
 
+  const toggleSold = async (car: Car) => {
+    const newStatus = car.status === "sold" ? "available" : "sold";
+    await adminFetch("/api/admin/cars", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: car.id, status: newStatus }),
+    });
+    fetchCars();
+  };
+
   const filtered = cars.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -71,13 +81,14 @@ export default function AdminCarsPage() {
                 <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">Year</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden md:table-cell">Fuel</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase hidden lg:table-cell">Location</th>
+                <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase">Status</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase">Featured</th>
                 <th className="px-4 py-3 text-xs font-semibold text-gray-600 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map((car) => (
-                <tr key={car.id} className="border-t border-gray-100 hover:bg-gray-50">
+                <tr key={car.id} className={`border-t border-gray-100 hover:bg-gray-50 ${car.status === "sold" ? "opacity-60 bg-gray-50" : ""}`}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {car.images[0] ? (
@@ -97,6 +108,16 @@ export default function AdminCarsPage() {
                   <td className="px-4 py-3 text-sm text-gray-700 hidden md:table-cell">{car.year}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 hidden md:table-cell">{car.fuelType}</td>
                   <td className="px-4 py-3 text-sm text-gray-700 hidden lg:table-cell">{car.city}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => toggleSold(car)}
+                      className={`text-xs px-2 py-1 rounded-full font-medium ${
+                        car.status === "sold" ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
+                      }`}
+                    >
+                      {car.status === "sold" ? "Sold" : "Available"}
+                    </button>
+                  </td>
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggleFeatured(car)}

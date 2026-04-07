@@ -293,10 +293,35 @@ export default function AdminEditCarPage() {
               className="w-full px-3 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" />
           </div>
 
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="featured" checked={form.featured || false} onChange={(e) => update("featured", e.target.checked)}
-              className="rounded border-gray-300" />
-            <label htmlFor="featured" className="text-sm text-gray-700">Featured</label>
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <input type="checkbox" id="featured" checked={form.featured || false} onChange={(e) => update("featured", e.target.checked)}
+                className="rounded border-gray-300" />
+              <label htmlFor="featured" className="text-sm text-gray-700">Featured</label>
+            </div>
+          </div>
+
+          {/* Mark as Sold */}
+          <div className={`flex items-center justify-between p-4 rounded-lg border ${form.status === "sold" ? "bg-red-50 border-red-200" : "bg-green-50 border-green-200"}`}>
+            <div>
+              <p className={`text-sm font-semibold ${form.status === "sold" ? "text-red-700" : "text-green-700"}`}>
+                {form.status === "sold" ? "This car is marked as SOLD" : "This car is Available"}
+              </p>
+              <p className="text-xs text-gray-500 mt-0.5">
+                {form.status === "sold" ? "Car appears greyed out on the website" : "Car is visible and active on the website"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => update("status", form.status === "sold" ? "available" : "sold")}
+              className={`px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                form.status === "sold"
+                  ? "bg-green-600 text-white hover:bg-green-700"
+                  : "bg-red-600 text-white hover:bg-red-700"
+              }`}
+            >
+              {form.status === "sold" ? "Mark as Available" : "Mark as Sold"}
+            </button>
           </div>
 
           <div className="flex gap-3 pt-4">

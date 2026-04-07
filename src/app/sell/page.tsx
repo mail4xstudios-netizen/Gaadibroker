@@ -38,9 +38,10 @@ export default function SellPage() {
           setUploading(false);
           return;
         }
+        const token = await user.getIdToken();
         const res = await fetch("/api/sell-leads/upload", {
           method: "POST",
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         });
         const data = await res.json();
@@ -74,10 +75,10 @@ export default function SellPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        userId: user?.id || "",
-        userName: user?.name || "",
-        userPhone: user?.phone || "",
-        userEmail: "",
+        userId: user?.uid || "",
+        userName: user?.displayName || "",
+        userPhone: user?.phoneNumber || "",
+        userEmail: user?.email || "",
         brand: form.brand,
         model: form.model,
         year: form.year,
@@ -334,8 +335,8 @@ export default function SellPage() {
                 {isLoggedIn && user && (
                   <div className="bg-emerald-50 rounded-lg p-4">
                     <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-2">Your Contact</p>
-                    <p className="font-bold text-slate-900 text-sm">{user.name || "User"}</p>
-                    <p className="text-xs text-slate-500 mt-1">+91 {user.phone}</p>
+                    <p className="font-bold text-slate-900 text-sm">{user.displayName || "User"}</p>
+                    <p className="text-xs text-slate-500 mt-1">{user.phoneNumber || user.email}</p>
                   </div>
                 )}
 

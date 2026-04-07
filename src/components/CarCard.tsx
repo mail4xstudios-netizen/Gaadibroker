@@ -1,12 +1,28 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Car, formatPrice, formatKm } from "@/lib/data";
+import { isInWishlist, toggleWishlist } from "@/lib/wishlist";
 
 export default function CarCard({ car, index = 0 }: { car: Car; index?: number }) {
+  const [wishlisted, setWishlisted] = useState(false);
+  const isSold = car.status === "sold";
+
+  useEffect(() => {
+    setWishlisted(isInWishlist(car.id));
+  }, [car.id]);
+
+  const handleWishlist = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const added = toggleWishlist(car.id);
+    setWishlisted(added);
+  };
+
   return (
     <Link href={`/cars/${car.id}`} className="block group">
-      <div className="bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,.08)] hover:-translate-y-1">
+      <div className={`bg-white rounded-xl overflow-hidden border border-slate-100 hover:border-orange-200 transition-all duration-300 hover:shadow-[0_8px_30px_rgba(0,0,0,.08)] hover:-translate-y-1 ${isSold ? "opacity-60 grayscale" : ""}`}>
         {/* Image - 1:1 */}
         <div className="relative aspect-square overflow-hidden bg-slate-100">
           {car.images[0] ? (
@@ -32,7 +48,29 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
                 Featured
               </span>
             )}
+            {isSold && (
+              <span className="bg-red-600 text-white text-[0.6rem] md:text-xs font-bold px-1.5 md:px-2 py-0.5 md:py-1 rounded-md">
+                SOLD
+              </span>
+            )}
           </div>
+
+          {/* Wishlist heart */}
+          <button
+            onClick={handleWishlist}
+            className="absolute top-2 md:top-3 right-2 md:right-3 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+            aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            <svg
+              className={`w-4 h-4 transition-colors ${wishlisted ? "text-red-500 fill-red-500" : "text-slate-400"}`}
+              fill={wishlisted ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth={2}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+            </svg>
+          </button>
 
           {/* Year badge bottom-left */}
           <span className="absolute bottom-2 md:bottom-3 left-2 md:left-3 text-white text-[0.65rem] md:text-xs font-semibold bg-black/40 backdrop-blur-sm px-1.5 md:px-2 py-0.5 rounded">
@@ -68,8 +106,8 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
           {/* Price */}
           <div className="flex items-end justify-between mt-2 md:mt-3 pt-2 md:pt-3 border-t border-slate-100">
             <div>
-              <p className="text-sm md:text-xl font-extrabold text-orange-600 tracking-tight">
-                {formatPrice(car.price)}
+              <p className={`text-sm md:text-xl font-extrabold tracking-tight ${isSold ? "text-slate-400" : "text-orange-600"}`}>
+                {isSold ? "SOLD" : formatPrice(car.price)}
               </p>
             </div>
             <span className="text-orange-600 text-xs font-semibold items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">

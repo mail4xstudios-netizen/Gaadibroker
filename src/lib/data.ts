@@ -19,6 +19,7 @@ export interface Car {
   registration: string;
   insurance: string;
   featured: boolean;
+  status?: "available" | "sold";
   createdAt: string;
 }
 
