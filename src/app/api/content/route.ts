@@ -16,6 +16,7 @@ export async function GET(request: Request) {
       privacyPolicy: content.privacyPolicy || "",
       termsOfService: content.termsOfService || "",
       youtubeVideoUrl: content.youtubeVideoUrl || "",
+      youtubeVideos: content.youtubeVideos || [],
     });
   } catch {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

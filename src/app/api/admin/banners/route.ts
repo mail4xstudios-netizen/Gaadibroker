@@ -47,6 +47,9 @@ export async function PUT(request: Request) {
     if (body.sliderImages && Array.isArray(body.sliderImages)) {
       sanitized.sliderImages = body.sliderImages.map((url: string) => sanitize(url, 500));
     }
+    if (body.youtubeVideos && Array.isArray(body.youtubeVideos)) {
+      sanitized.youtubeVideos = body.youtubeVideos.map((url: string) => sanitize(url, 500));
+    }
     const content = await updateSiteContent(sanitized);
     return NextResponse.json(content);
   } catch (err) {

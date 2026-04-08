@@ -113,6 +113,7 @@ interface SiteContent {
   privacyPolicy: string;
   termsOfService: string;
   youtubeVideoUrl: string;
+  youtubeVideos: string[];
 }
 
 const defaultContent: SiteContent = {
@@ -129,6 +130,7 @@ const defaultContent: SiteContent = {
   privacyPolicy: "",
   termsOfService: "",
   youtubeVideoUrl: "",
+  youtubeVideos: [],
 };
 
 export async function getSiteContent(): Promise<SiteContent> {

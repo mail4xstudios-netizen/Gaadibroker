@@ -17,6 +17,7 @@ interface SiteContent {
   privacyPolicy: string;
   termsOfService: string;
   youtubeVideoUrl: string;
+  youtubeVideos: string[];
 }
 
 export default function AdminContentPage() {
@@ -28,11 +29,11 @@ export default function AdminContentPage() {
 
   useEffect(() => {
     adminFetch("/api/admin/banners").then((r) => r.json()).then((data) => {
-      setContent({ sliderImages: [], ...data });
+      setContent({ sliderImages: [], youtubeVideos: [], ...data });
     }).catch(() => {});
   }, []);
 
-  const update = (key: string, value: string | string[]) => {
+  const update = (key: string, value: string | string[] | unknown) => {
     if (content) setContent({ ...content, [key]: value });
   };
 
@@ -288,20 +289,65 @@ export default function AdminContentPage() {
           <textarea rows={4} value={content.aboutText} onChange={(e) => update("aboutText", e.target.value)} className={`${inputClass} resize-none`} />
         </div>
 
-        {/* YouTube Video */}
+        {/* YouTube Videos */}
         <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="font-bold text-gray-900 mb-2">YouTube Video</h2>
-          <p className="text-xs text-gray-500 mb-4">Add a YouTube video URL to show on the homepage below Browse by Brand. Paste the full YouTube URL (e.g. https://www.youtube.com/watch?v=xxxxx)</p>
-          <input type="text" value={content.youtubeVideoUrl || ""} onChange={(e) => update("youtubeVideoUrl", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className={inputClass} />
-          {content.youtubeVideoUrl && (() => {
-            const match = content.youtubeVideoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
-            const videoId = match ? match[1] : null;
-            return videoId ? (
-              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200">
-                <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt="Video thumbnail" className="w-full h-40 object-cover" />
-              </div>
-            ) : <p className="text-xs text-red-500 mt-2">Invalid YouTube URL</p>;
-          })()}
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="font-bold text-gray-900">YouTube Videos</h2>
+            <span className="text-xs font-medium text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">
+              {(content.youtubeVideos || []).length} videos
+            </span>
+          </div>
+          <p className="text-xs text-gray-500 mb-4">Add YouTube video links to show on the homepage. Videos will display as portrait (9:16) banners.</p>
+
+          {/* Existing videos */}
+          {(content.youtubeVideos || []).length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+              {(content.youtubeVideos || []).map((url: string, idx: number) => {
+                const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+                const videoId = match ? match[1] : null;
+                return (
+                  <div key={idx} className="relative group">
+                    <div className="aspect-[9/16] rounded-lg overflow-hidden border border-gray-200 bg-gray-100">
+                      {videoId ? (
+                        <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt={`Video ${idx + 1}`} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">Invalid URL</div>
+                      )}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const videos = [...(content.youtubeVideos || [])];
+                        videos.splice(idx, 1);
+                        update("youtubeVideos", videos as unknown as string);
+                      }}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+                    >
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                    </button>
+                    <p className="text-[0.6rem] text-gray-400 mt-1 truncate">{url}</p>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Add new video */}
+          <button
+            type="button"
+            onClick={() => {
+              const url = prompt("Enter YouTube video URL:");
+              if (url && url.trim()) {
+                const videos = [...(content.youtubeVideos || []), url.trim()];
+                update("youtubeVideos", videos as unknown as string);
+              }
+            }}
+            className="w-full border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-orange-400 hover:bg-orange-50/50 transition-colors cursor-pointer"
+          >
+            <svg className="w-8 h-8 text-gray-300 mx-auto mb-1" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
+            <p className="text-sm font-medium text-gray-600">Add YouTube Video</p>
+            <p className="text-xs text-gray-400 mt-0.5">Paste a YouTube link (regular, shorts, or embed)</p>
+          </button>
         </div>
 
         {/* Privacy Policy */}

@@ -9,7 +9,7 @@ import { Car, sampleCars, Brand, brands as defaultBrands, budgetRanges, testimon
 export default function Home() {
   const [cars, setCars] = useState<Car[]>(sampleCars);
   const [brands, setBrands] = useState<Brand[]>(defaultBrands);
-  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [youtubeVideos, setYoutubeVideos] = useState<string[]>([]);
 
   useEffect(() => {
     fetch("/api/cars")
@@ -22,7 +22,10 @@ export default function Home() {
       .catch(() => {});
     fetch("/api/content")
       .then((r) => r.json())
-      .then((data) => { if (data.youtubeVideoUrl) setYoutubeUrl(data.youtubeVideoUrl); })
+      .then((data) => {
+        if (data.youtubeVideos && data.youtubeVideos.length > 0) setYoutubeVideos(data.youtubeVideos);
+        else if (data.youtubeVideoUrl) setYoutubeVideos([data.youtubeVideoUrl]);
+      })
       .catch(() => {});
   }, []);
 
@@ -213,36 +216,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* YouTube Video */}
-      {youtubeUrl && (() => {
-        const match = youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
-        const videoId = match ? match[1] : null;
-        if (!videoId) return null;
-        return (
-          <section className="max-w-7xl mx-auto px-4 md:px-6 pb-8 md:pb-16">
-            <a
-              href={youtubeUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block group relative rounded-2xl overflow-hidden border border-slate-200 hover:border-orange-300 transition-all hover:shadow-lg"
-            >
-              <img
-                src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-                alt="Watch our video"
-                className="w-full h-48 md:h-80 object-cover group-hover:scale-[1.02] transition-transform duration-500"
-              />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
-                  <svg className="w-8 h-8 md:w-10 md:h-10 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
-                </div>
-              </div>
-              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-4 md:p-6">
-                <p className="text-white font-semibold text-sm md:text-lg">Watch on YouTube</p>
-              </div>
-            </a>
-          </section>
-        );
-      })()}
+      {/* YouTube Videos */}
+      {youtubeVideos.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 md:px-6 pb-8 md:pb-16">
+          <div className="text-center mb-5 md:mb-8">
+            <h2 className="section-title">Our Videos</h2>
+            <p className="section-subtitle">Watch our latest videos on YouTube</p>
+          </div>
+          <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide">
+            {youtubeVideos.map((url, idx) => {
+              const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+              const videoId = match ? match[1] : null;
+              if (!videoId) return null;
+              return (
+                <a
+                  key={idx}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex-shrink-0 w-[160px] md:w-[220px] snap-start group relative rounded-xl overflow-hidden border border-slate-200 hover:border-orange-300 transition-all hover:shadow-lg"
+                >
+                  <div className="aspect-[9/16] bg-slate-100">
+                    <img
+                      src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                      alt={`Video ${idx + 1}`}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                    <div className="w-12 h-12 md:w-14 md:h-14 bg-red-600 rounded-full flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6 md:w-7 md:h-7 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                    </div>
+                  </div>
+                </a>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Why Choose Us */}
       <section className="bg-slate-900 py-10 md:py-20 relative overflow-hidden">
