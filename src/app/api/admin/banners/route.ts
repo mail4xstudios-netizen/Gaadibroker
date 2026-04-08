@@ -37,6 +37,7 @@ export async function PUT(request: Request) {
     const allowedFields: Record<string, number> = {
       heroTitle: 200, heroSubtitle: 500, heroCta: 50, bannerImage: 500,
       aboutText: 2000, contactEmail: 100, contactPhone: 20, contactAddress: 300, whatsappNumber: 20,
+      privacyPolicy: 20000, termsOfService: 20000, youtubeVideoUrl: 500,
     };
     const sanitized: Record<string, unknown> = {};
     for (const [key, maxLen] of Object.entries(allowedFields)) {

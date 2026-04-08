@@ -110,6 +110,9 @@ interface SiteContent {
   contactPhone: string;
   contactAddress: string;
   whatsappNumber: string;
+  privacyPolicy: string;
+  termsOfService: string;
+  youtubeVideoUrl: string;
 }
 
 const defaultContent: SiteContent = {
@@ -123,6 +126,9 @@ const defaultContent: SiteContent = {
   contactPhone: "+91 8108797000",
   contactAddress: "Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai, Maharashtra 400706",
   whatsappNumber: "918108797000",
+  privacyPolicy: "",
+  termsOfService: "",
+  youtubeVideoUrl: "",
 };
 
 export async function getSiteContent(): Promise<SiteContent> {

@@ -14,6 +14,9 @@ interface SiteContent {
   contactPhone: string;
   contactAddress: string;
   whatsappNumber: string;
+  privacyPolicy: string;
+  termsOfService: string;
+  youtubeVideoUrl: string;
 }
 
 export default function AdminContentPage() {
@@ -283,6 +286,36 @@ export default function AdminContentPage() {
         <div className="bg-white rounded-xl shadow-md p-6">
           <h2 className="font-bold text-gray-900 mb-4">About Section</h2>
           <textarea rows={4} value={content.aboutText} onChange={(e) => update("aboutText", e.target.value)} className={`${inputClass} resize-none`} />
+        </div>
+
+        {/* YouTube Video */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="font-bold text-gray-900 mb-2">YouTube Video</h2>
+          <p className="text-xs text-gray-500 mb-4">Add a YouTube video URL to show on the homepage below Browse by Brand. Paste the full YouTube URL (e.g. https://www.youtube.com/watch?v=xxxxx)</p>
+          <input type="text" value={content.youtubeVideoUrl || ""} onChange={(e) => update("youtubeVideoUrl", e.target.value)} placeholder="https://www.youtube.com/watch?v=..." className={inputClass} />
+          {content.youtubeVideoUrl && (() => {
+            const match = content.youtubeVideoUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/);
+            const videoId = match ? match[1] : null;
+            return videoId ? (
+              <div className="mt-3 rounded-lg overflow-hidden border border-gray-200">
+                <img src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`} alt="Video thumbnail" className="w-full h-40 object-cover" />
+              </div>
+            ) : <p className="text-xs text-red-500 mt-2">Invalid YouTube URL</p>;
+          })()}
+        </div>
+
+        {/* Privacy Policy */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="font-bold text-gray-900 mb-2">Privacy Policy</h2>
+          <p className="text-xs text-gray-500 mb-4">Edit the Privacy Policy page content. Use plain text with line breaks for paragraphs.</p>
+          <textarea rows={12} value={content.privacyPolicy || ""} onChange={(e) => update("privacyPolicy", e.target.value)} placeholder="Enter your Privacy Policy content here..." className={`${inputClass} resize-y font-mono text-xs`} />
+        </div>
+
+        {/* Terms of Service */}
+        <div className="bg-white rounded-xl shadow-md p-6">
+          <h2 className="font-bold text-gray-900 mb-2">Terms &amp; Conditions</h2>
+          <p className="text-xs text-gray-500 mb-4">Edit the Terms &amp; Conditions page content. Use plain text with line breaks for paragraphs.</p>
+          <textarea rows={12} value={content.termsOfService || ""} onChange={(e) => update("termsOfService", e.target.value)} placeholder="Enter your Terms & Conditions content here..." className={`${inputClass} resize-y font-mono text-xs`} />
         </div>
       </div>
     </div>
