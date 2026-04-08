@@ -100,14 +100,14 @@ function CarsPageContent() {
       {/* Page Header */}
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 md:px-6 py-5">
-          <nav className="text-xs md:text-sm text-slate-500 mb-3 flex items-center gap-1 md:gap-1.5">
-            <a href="/" className="hover:text-orange-500 transition-colors whitespace-nowrap">Home</a>
-            <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
-            <span className="text-slate-900 font-medium whitespace-nowrap">Used Cars</span>
+          <nav className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 md:text-sm mb-3">
+            <a href="/" className="inline-flex items-center hover:text-orange-500 transition-colors">Home</a>
+            <svg className="w-3 h-3 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+            <span className="inline-flex items-center text-slate-900 font-medium">Used Cars</span>
             {filters.brand && (
               <>
-                <svg className="w-3 h-3 md:w-3.5 md:h-3.5 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
-                <span className="text-slate-900 font-medium whitespace-nowrap truncate">{filters.brand}</span>
+                <svg className="w-3 h-3 text-slate-300 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                <span className="inline-flex items-center text-slate-900 font-medium">{filters.brand}</span>
               </>
             )}
           </nav>
