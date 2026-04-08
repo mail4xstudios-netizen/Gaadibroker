@@ -188,7 +188,7 @@ export default function Header() {
       />
 
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-50 shadow-2xl transform transition-transform duration-300 ease-out ${
+        className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-[1000] shadow-2xl transform transition-transform duration-300 ease-out ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
