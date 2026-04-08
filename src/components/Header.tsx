@@ -181,19 +181,19 @@ export default function Header() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
+        className={`md:hidden fixed inset-0 bg-black/40 z-[999] transition-opacity duration-300 ${
           mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileOpen(false)}
       />
 
       <div
-        className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-[1000] shadow-2xl transform transition-transform duration-300 ease-out ${
+        className={`md:hidden fixed top-0 right-0 h-full w-[280px] bg-white z-[1000] shadow-2xl transform transition-transform duration-300 ease-out overflow-y-auto ${
           mobileOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100">
-          <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-5 w-auto" />
+          <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-10 w-auto" />
           <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close menu">
             <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
