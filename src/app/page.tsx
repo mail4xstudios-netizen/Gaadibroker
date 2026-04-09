@@ -34,7 +34,7 @@ export default function Home() {
   return (
     <div>
       {/* Hero Section — Luxury Dark Theme with Full-Screen Car Image */}
-      <section className="relative bg-[#0B0B0B] overflow-hidden h-screen">
+      <section className="relative bg-[#0B0B0B] overflow-hidden">
         {/* Full-screen background car image */}
         <div className="absolute inset-0 z-0">
           <img
