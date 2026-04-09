@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import SearchBar from "@/components/SearchBar";
 import CarCard from "@/components/CarCard";
@@ -37,12 +38,13 @@ export default function Home() {
       <section className="relative bg-[#0B0B0B] overflow-hidden">
         {/* Full-screen background car image */}
         <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1555215695-3004980ad54e?w=1920&q=80"
+          <Image
+            src="https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1600&q=70"
             alt="Luxury pre-owned car"
-            className="w-full h-full object-cover object-center"
-            loading="eager"
-            fetchPriority="high"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
           />
           {/* Cinematic overlays — lighter on mobile so car is visible */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/95 via-[#0B0B0B]/55 md:via-[#0B0B0B]/70 to-[#0B0B0B]/20 md:to-transparent" />
@@ -190,7 +192,7 @@ export default function Home() {
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 md:gap-5">
           {featuredCars.map((car, i) => (
-            <CarCard key={car.id} car={car} index={i} />
+            <CarCard key={car.id} car={car} index={i} priority={i < 2} />
           ))}
         </div>
 
@@ -275,11 +277,14 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="flex-shrink-0 w-[160px] md:w-[220px] snap-start group relative rounded-xl overflow-hidden border border-slate-200 hover:border-orange-300 transition-all hover:shadow-lg"
                 >
-                  <div className="aspect-[9/16] bg-slate-100">
-                    <img
+                  <div className="aspect-[9/16] bg-slate-100 relative">
+                    <Image
                       src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
                       alt={`Video ${idx + 1}`}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      sizes="(max-width: 768px) 160px, 220px"
+                      loading="lazy"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors flex items-center justify-center">
@@ -489,9 +494,12 @@ function BrandLogo({ brand }: { brand: Brand }) {
   }
 
   return (
-    <img
+    <Image
       src={brand.logo}
       alt={`${brand.name} logo`}
+      width={56}
+      height={56}
+      loading="lazy"
       className="w-8 h-8 md:w-14 md:h-14 object-contain mx-auto"
       onError={() => setImgError(true)}
     />

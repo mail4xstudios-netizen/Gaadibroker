@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -106,7 +107,14 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-14 md:h-[68px]">
           <Link href="/" className="flex items-center group">
-            <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-[5rem] md:h-[8rem] w-auto" />
+            <Image
+              src="/images/logo-v2.png"
+              alt="GaadiBroker"
+              width={206}
+              height={128}
+              priority
+              className="h-[5rem] md:h-[8rem] w-auto"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-0.5">
@@ -147,6 +155,7 @@ export default function Header() {
                   className="flex items-center gap-2 pl-2 pr-3 py-1.5 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-200"
                 >
                   {avatarUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
                     <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center shadow-sm">
@@ -213,7 +222,13 @@ export default function Header() {
         }`}
       >
         <div className="flex items-center justify-between px-5 h-14 border-b border-slate-100">
-          <img src="/images/logo-v2.png" alt="GaadiBroker" className="h-[5rem] w-auto" />
+          <Image
+            src="/images/logo-v2.png"
+            alt="GaadiBroker"
+            width={128}
+            height={80}
+            className="h-[5rem] w-auto"
+          />
           <button onClick={() => setMobileOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors" aria-label="Close menu">
             <svg className="w-5 h-5 text-slate-500" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />

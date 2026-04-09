@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Car, formatPrice, formatKm } from "@/lib/data";
 import { isInWishlist, toggleWishlist } from "@/lib/wishlist";
 
-export default function CarCard({ car, index = 0 }: { car: Car; index?: number }) {
+export default function CarCard({ car, index = 0, priority = false }: { car: Car; index?: number; priority?: boolean }) {
   const [wishlisted, setWishlisted] = useState(false);
   const isSold = car.status === "sold";
 
@@ -26,11 +27,14 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
         {/* Image - 1:1 */}
         <div className="relative aspect-square overflow-hidden bg-slate-100">
           {car.images[0] ? (
-            <img
+            <Image
               src={car.images[0]}
               alt={car.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-              loading="lazy"
+              fill
+              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              priority={priority}
+              loading={priority ? undefined : "lazy"}
+              className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-slate-300">

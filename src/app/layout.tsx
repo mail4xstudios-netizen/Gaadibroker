@@ -1,7 +1,15 @@
 import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import LayoutShell from "@/components/LayoutShell";
 import { WebsiteSchema, OrganizationSchema } from "@/components/SchemaMarkup";
+
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+  variable: "--font-jakarta",
+});
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://gaadibroker.com";
 
@@ -58,10 +66,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={jakarta.variable}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="icon" href="/images/logo-icon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/images/logo-icon.svg" />
