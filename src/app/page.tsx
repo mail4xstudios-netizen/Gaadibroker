@@ -53,7 +53,7 @@ export default function Home() {
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/15 rounded-full blur-[120px] pointer-events-none z-0" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-16 pb-6 md:pb-16 min-h-[560px] md:min-h-[720px] flex flex-col justify-start">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-16 pb-6 md:pb-16 md:min-h-[720px] flex flex-col justify-start">
           <div className="max-w-2xl">
             {/* Premium badge — hidden on mobile to save space */}
             <div className="hidden md:inline-flex items-center gap-2 mb-6">
@@ -64,7 +64,7 @@ export default function Home() {
             </div>
 
             {/* Headline */}
-            <h1 className="text-[1.75rem] md:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]">
+            <h1 className="text-[2rem] md:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]">
               Buy Pre-Owned Cars{" "}
               <span className="relative inline-block">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6A00] to-[#FF8C00]">
@@ -75,41 +75,41 @@ export default function Home() {
             </h1>
 
             {/* Subtext */}
-            <p className="text-[0.75rem] md:text-lg text-slate-200 mt-3 md:mt-6 leading-relaxed max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
+            <p className="text-[0.8125rem] md:text-lg text-slate-200 mt-3 md:mt-6 leading-relaxed max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
               <span className="text-white font-semibold">1000+ Cars Delivered</span>
               <span className="text-slate-400 mx-1.5 md:mx-2">|</span>
               <span className="text-white font-semibold">Verified & Inspected Cars</span>
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-row gap-2 md:gap-3 mt-4 md:mt-8">
+            {/* CTAs — desktop only */}
+            <div className="hidden md:flex flex-row gap-3 mt-8">
               <Link
                 href="/contact"
-                className="group relative inline-flex items-center justify-center gap-1.5 md:gap-2 bg-gradient-to-r from-[#FF6A00] to-[#FF8C00] text-white font-semibold px-4 md:px-8 py-2.5 md:py-4 rounded-lg md:rounded-xl text-[0.75rem] md:text-base shadow-[0_8px_30px_rgba(255,106,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,106,0,0.55)] hover:scale-[1.02] transition-all duration-300"
+                className="group relative inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#FF6A00] to-[#FF8C00] text-white font-semibold px-8 py-4 rounded-xl text-base shadow-[0_8px_30px_rgba(255,106,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,106,0,0.55)] hover:scale-[1.02] transition-all duration-300"
               >
                 Get Consultation
-                <svg className="w-3.5 h-3.5 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
               <Link
                 href="/cars"
-                className="inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold px-4 md:px-8 py-2.5 md:py-4 rounded-lg md:rounded-xl text-[0.75rem] md:text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold px-8 py-4 rounded-xl text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300"
               >
                 Browse Cars
               </Link>
             </div>
 
-            {/* Trust badges — single line on mobile */}
-            <div className="flex flex-nowrap items-center gap-x-2 md:gap-x-6 mt-4 md:mt-10 overflow-x-auto scrollbar-hide">
+            {/* Trust badges — desktop only */}
+            <div className="hidden md:flex flex-nowrap items-center gap-x-6 mt-10 overflow-x-auto scrollbar-hide">
               {[
                 "No Accidental Cars",
                 "No Hidden History",
                 "100% Transparency",
               ].map((text) => (
-                <span key={text} className="flex items-center gap-1 md:gap-1.5 text-slate-200 text-[0.6rem] md:text-xs font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] whitespace-nowrap flex-shrink-0">
-                  <span className="w-3 h-3 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF8C00] flex items-center justify-center flex-shrink-0 shadow-[0_0_8px_rgba(255,106,0,0.6)] md:shadow-[0_0_12px_rgba(255,106,0,0.6)]">
-                    <svg className="w-2 h-2 md:w-3 md:h-3 text-white" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24">
+                <span key={text} className="flex items-center gap-1.5 text-slate-200 text-xs font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] whitespace-nowrap flex-shrink-0">
+                  <span className="w-5 h-5 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF8C00] flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(255,106,0,0.6)]">
+                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
                   </span>
@@ -120,7 +120,7 @@ export default function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="mt-5 md:mt-12 max-w-4xl">
+          <div className="mt-4 md:mt-12 max-w-4xl">
             <SearchBar />
           </div>
         </div>
@@ -131,45 +131,40 @@ export default function Home() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
               {[
                 {
-                  title: "1000+ Cars",
-                  subtitle: "Delivered",
+                  label: "1000+ Cars Delivered",
                   icon: (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                   ),
                 },
                 {
-                  title: "Thorough",
-                  subtitle: "Inspections",
+                  label: "Thorough Inspections",
                   icon: (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z" />
                   ),
                 },
                 {
-                  title: "Personalized",
-                  subtitle: "Consultation",
+                  label: "Personalized Consultation",
                   icon: (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
                   ),
                 },
                 {
-                  title: "Best Price",
-                  subtitle: "Guarantee",
+                  label: "Best Price Guarantee",
                   icon: (
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
                   ),
                 },
               ].map((feat) => (
                 <div
-                  key={feat.title}
-                  className="group relative bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/10 rounded-xl md:rounded-2xl p-3 md:p-5 hover:border-orange-500/40 transition-all duration-300"
+                  key={feat.label}
+                  className="group relative flex items-center gap-2.5 md:flex-col md:items-start md:gap-0 bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/10 rounded-xl md:rounded-2xl p-3 md:p-5 hover:border-orange-500/40 transition-all duration-300"
                 >
-                  <div className="w-9 h-9 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br from-[#FF6A00]/20 to-[#FF8C00]/5 border border-orange-500/30 flex items-center justify-center mb-2 md:mb-3 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.4)] transition-shadow">
+                  <div className="w-9 h-9 md:w-12 md:h-12 rounded-lg md:rounded-xl bg-gradient-to-br from-[#FF6A00]/20 to-[#FF8C00]/5 border border-orange-500/30 flex items-center justify-center flex-shrink-0 md:mb-3 shadow-[0_0_20px_rgba(255,106,0,0.25)] group-hover:shadow-[0_0_30px_rgba(255,106,0,0.4)] transition-shadow">
                     <svg className="w-4 h-4 md:w-6 md:h-6 text-[#FF8C00]" fill="none" stroke="currentColor" strokeWidth={1.8} viewBox="0 0 24 24">
                       {feat.icon}
                     </svg>
                   </div>
-                  <p className="text-white font-bold text-xs md:text-base leading-tight">{feat.title}</p>
-                  <p className="text-slate-400 text-[0.65rem] md:text-xs mt-0.5">{feat.subtitle}</p>
+                  <p className="text-white font-bold text-[0.75rem] md:text-base leading-tight">{feat.label}</p>
                 </div>
               ))}
             </div>
