@@ -44,27 +44,27 @@ export default function Home() {
             loading="eager"
             fetchPriority="high"
           />
-          {/* Cinematic overlays — stronger on mobile for text legibility */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B] via-[#0B0B0B]/80 md:via-[#0B0B0B]/70 to-[#0B0B0B]/40 md:to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-[#0B0B0B]/50 to-[#0B0B0B]/40 md:from-[#0B0B0B]/90 md:via-transparent md:to-transparent" />
+          {/* Cinematic overlays — lighter on mobile so car is visible */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B0B0B]/95 via-[#0B0B0B]/55 md:via-[#0B0B0B]/70 to-[#0B0B0B]/20 md:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0B0B0B]/90 via-transparent to-[#0B0B0B]/30 md:from-[#0B0B0B]/90 md:via-transparent md:to-transparent" />
         </div>
 
         {/* Ambient glow accents */}
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/15 rounded-full blur-[120px] pointer-events-none z-0" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-16 pb-8 md:pb-16 min-h-[560px] md:min-h-[720px] flex flex-col justify-start">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-6 md:pt-16 pb-6 md:pb-16 min-h-[560px] md:min-h-[720px] flex flex-col justify-start">
           <div className="max-w-2xl">
-            {/* Premium badge */}
-            <div className="inline-flex items-center gap-2 mb-4 md:mb-6">
-              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-500/20 to-orange-400/10 text-orange-300 text-[0.65rem] md:text-xs font-semibold px-3 py-1.5 rounded-full border border-orange-500/30 backdrop-blur-sm uppercase tracking-wider">
+            {/* Premium badge — hidden on mobile to save space */}
+            <div className="hidden md:inline-flex items-center gap-2 mb-6">
+              <span className="inline-flex items-center gap-1.5 bg-gradient-to-r from-orange-500/20 to-orange-400/10 text-orange-300 text-xs font-semibold px-3 py-1.5 rounded-full border border-orange-500/30 backdrop-blur-sm uppercase tracking-wider">
                 <span className="w-1.5 h-1.5 bg-orange-400 rounded-full animate-pulse" />
                 India&apos;s Premium Pre-Owned Marketplace
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="text-[2rem] md:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)]">
+            <h1 className="text-[1.75rem] md:text-[4rem] font-extrabold text-white leading-[1.1] tracking-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]">
               Buy Pre-Owned Cars{" "}
               <span className="relative inline-block">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6A00] to-[#FF8C00]">
@@ -75,41 +75,41 @@ export default function Home() {
             </h1>
 
             {/* Subtext */}
-            <p className="text-sm md:text-lg text-slate-200 mt-4 md:mt-6 leading-relaxed max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.5)]">
+            <p className="text-[0.75rem] md:text-lg text-slate-200 mt-3 md:mt-6 leading-relaxed max-w-xl drop-shadow-[0_2px_10px_rgba(0,0,0,0.6)]">
               <span className="text-white font-semibold">1000+ Cars Delivered</span>
-              <span className="text-slate-400 mx-2">|</span>
+              <span className="text-slate-400 mx-1.5 md:mx-2">|</span>
               <span className="text-white font-semibold">Verified & Inspected Cars</span>
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-3 mt-6 md:mt-8">
+            <div className="flex flex-row gap-2 md:gap-3 mt-4 md:mt-8">
               <Link
                 href="/contact"
-                className="group relative inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#FF6A00] to-[#FF8C00] text-white font-semibold px-6 md:px-8 py-3.5 md:py-4 rounded-xl text-sm md:text-base shadow-[0_8px_30px_rgba(255,106,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,106,0,0.55)] hover:scale-[1.02] transition-all duration-300"
+                className="group relative inline-flex items-center justify-center gap-1.5 md:gap-2 bg-gradient-to-r from-[#FF6A00] to-[#FF8C00] text-white font-semibold px-4 md:px-8 py-2.5 md:py-4 rounded-lg md:rounded-xl text-[0.75rem] md:text-base shadow-[0_8px_30px_rgba(255,106,0,0.4)] hover:shadow-[0_12px_40px_rgba(255,106,0,0.55)] hover:scale-[1.02] transition-all duration-300"
               >
-                Get Expert Consultation
-                <svg className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                Get Consultation
+                <svg className="w-3.5 h-3.5 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
                 </svg>
               </Link>
               <Link
                 href="/cars"
-                className="inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold px-6 md:px-8 py-3.5 md:py-4 rounded-xl text-sm md:text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300"
+                className="inline-flex items-center justify-center gap-2 border border-white/30 bg-white/10 backdrop-blur-md text-white font-semibold px-4 md:px-8 py-2.5 md:py-4 rounded-lg md:rounded-xl text-[0.75rem] md:text-base hover:bg-white/20 hover:border-white/50 transition-all duration-300"
               >
-                Browse Verified Cars
+                Browse Cars
               </Link>
             </div>
 
-            {/* Trust badges */}
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 md:gap-x-6 mt-6 md:mt-10">
+            {/* Trust badges — single line on mobile */}
+            <div className="flex flex-nowrap items-center gap-x-2 md:gap-x-6 mt-4 md:mt-10 overflow-x-auto scrollbar-hide">
               {[
                 "No Accidental Cars",
                 "No Hidden History",
                 "100% Transparency",
               ].map((text) => (
-                <span key={text} className="flex items-center gap-1.5 text-slate-200 text-[0.7rem] md:text-xs font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-                  <span className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF8C00] flex items-center justify-center flex-shrink-0 shadow-[0_0_12px_rgba(255,106,0,0.6)]">
-                    <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-white" fill="none" stroke="currentColor" strokeWidth={3.5} viewBox="0 0 24 24">
+                <span key={text} className="flex items-center gap-1 md:gap-1.5 text-slate-200 text-[0.6rem] md:text-xs font-medium drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)] whitespace-nowrap flex-shrink-0">
+                  <span className="w-3 h-3 md:w-5 md:h-5 rounded-full bg-gradient-to-br from-[#FF6A00] to-[#FF8C00] flex items-center justify-center flex-shrink-0 shadow-[0_0_8px_rgba(255,106,0,0.6)] md:shadow-[0_0_12px_rgba(255,106,0,0.6)]">
+                    <svg className="w-2 h-2 md:w-3 md:h-3 text-white" fill="none" stroke="currentColor" strokeWidth={4} viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                     </svg>
                   </span>
@@ -120,7 +120,7 @@ export default function Home() {
           </div>
 
           {/* Search Bar */}
-          <div className="mt-6 md:mt-12 max-w-4xl">
+          <div className="mt-5 md:mt-12 max-w-4xl">
             <SearchBar />
           </div>
         </div>

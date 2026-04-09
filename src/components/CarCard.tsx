@@ -103,17 +103,22 @@ export default function CarCard({ car, index = 0 }: { car: Car; index?: number }
             </span>
           </div>
 
-          {/* Price */}
-          <div className="flex items-end justify-between mt-2 md:mt-3 pt-2 md:pt-3 border-t border-slate-100">
-            <div>
+          {/* Price + Recent views */}
+          <div className="flex items-end justify-between gap-2 mt-2 md:mt-3 pt-2 md:pt-3 border-t border-slate-100">
+            <div className="min-w-0">
               <p className={`text-sm md:text-xl font-extrabold tracking-tight ${isSold ? "text-slate-400" : "text-orange-600"}`}>
                 {isSold ? "SOLD" : formatPrice(car.price)}
               </p>
             </div>
-            <span className="text-orange-600 text-xs font-semibold items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity hidden md:flex">
-              View
-              <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" /></svg>
-            </span>
+            {!isSold && typeof car.recentViews === "number" && car.recentViews > 0 && (
+              <span className="flex items-center gap-1 text-[0.6rem] md:text-[0.7rem] font-semibold text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 md:px-2 py-0.5 md:py-1 rounded-md flex-shrink-0 whitespace-nowrap">
+                <span className="relative flex w-1.5 h-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                </span>
+                {car.recentViews} viewing
+              </span>
+            )}
           </div>
         </div>
       </div>

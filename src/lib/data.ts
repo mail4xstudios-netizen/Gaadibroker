@@ -20,6 +20,8 @@ export interface Car {
   insurance: string;
   featured: boolean;
   status?: "available" | "sold";
+  recentViews?: number;
+  recentViewsResetAt?: string;
   createdAt: string;
 }
 

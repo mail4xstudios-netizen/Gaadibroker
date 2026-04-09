@@ -26,6 +26,9 @@ export default function CarDetailPage() {
       })
       .catch(() => setCar(sampleCars.find((c) => c.id === id) || null))
       .finally(() => setLoading(false));
+
+    // Track this view (fire-and-forget)
+    fetch(`/api/cars/${id}/view`, { method: "POST" }).catch(() => {});
   }, [id]);
 
   if (loading) {
