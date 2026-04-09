@@ -53,7 +53,7 @@ export default function Home() {
         <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-orange-500/15 rounded-full blur-[120px] pointer-events-none z-0" />
         <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-orange-600/15 rounded-full blur-[140px] pointer-events-none z-0" />
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-12 md:pt-28 pb-8 md:pb-20 min-h-[560px] md:min-h-[720px] flex flex-col justify-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 pt-8 md:pt-16 pb-8 md:pb-16 min-h-[560px] md:min-h-[720px] flex flex-col justify-start">
           <div className="max-w-2xl">
             {/* Premium badge */}
             <div className="inline-flex items-center gap-2 mb-4 md:mb-6">
