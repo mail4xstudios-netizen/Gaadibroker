@@ -500,6 +500,7 @@ function BrandLogo({ brand }: { brand: Brand }) {
       width={56}
       height={56}
       loading="lazy"
+      unoptimized
       className="w-8 h-8 md:w-14 md:h-14 object-contain mx-auto"
       onError={() => setImgError(true)}
     />
