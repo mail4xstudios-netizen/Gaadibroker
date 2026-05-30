@@ -2,62 +2,122 @@
 
 import { useState, useEffect } from "react";
 
-const defaultContent = `GaadiBroker ("we", "us", "our") operates the website gaadibroker.com. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our platform.
+const defaultContent = `Effective Date: May 30, 2026
+
+Welcome to GaadiBroker ("we," "our," or "us"). Your privacy is important to us. This Privacy Policy explains how we collect, use, share, and protect your information when you use our website and services.
+
+By accessing or using GaadiBroker, you agree to the terms of this Privacy Policy.
 
 1. Information We Collect
 
-Personal Information: When you use our services, we may collect your name, phone number, email address, city, and car preferences.
+We may collect the following types of information:
 
-Usage Data: We automatically collect information about how you interact with our platform, including pages visited, time spent, device type, browser, and IP address.
+a. Personal Information
+- Full Name
+- Phone Number
+- Email Address
+- Location (City/Area)
 
-Cookies: We use cookies and similar tracking technologies to improve your experience and analyse traffic.
+b. Vehicle & Preference Data
+- Car interest or inquiry details
+- Budget and preferences
+- Buying/selling intent
+
+c. Technical Information
+- IP address
+- Browser type
+- Device information
+- Website usage data
+
+d. Cookies & Tracking
+We use cookies and similar technologies to enhance user experience and analyze website traffic.
 
 2. How We Use Your Information
 
-- To connect you with car sellers or buyers
-- To process your car buying, selling, or test drive requests
-- To send you relevant car recommendations and updates
-- To improve our platform, services, and user experience
-- To prevent fraud and ensure platform security
-- To comply with legal obligations under Indian law
+We use your information to:
+- Connect buyers with verified dealers/sellers
+- Respond to your inquiries
+- Provide customer support
+- Send updates, offers, and promotional messages
+- Improve our services and user experience
+- Run marketing and advertising campaigns
 
-3. Data Security
+3. Consent for Communication
 
-We implement industry-standard security measures including encryption (SSL/TLS), secure server infrastructure, and access controls to protect your personal information. However, no method of electronic transmission or storage is 100% secure, and we cannot guarantee absolute security.
+By submitting your details on GaadiBroker, you expressly consent to be contacted by:
+- GaadiBroker team
+- Verified dealer partners
+- Associated service providers
+
+via:
+- Phone calls
+- SMS
+- WhatsApp
+- Email
+
+regarding your inquiry, offers, and related services.
 
 4. Sharing of Information
 
-We do not sell, trade, or rent your personal information to third parties. We may share your contact details with verified dealers or sellers only when you express interest in a specific vehicle, book a test drive, or submit an enquiry.
+We may share your information with:
+- Verified car dealers and channel partners
+- Loan providers and financial institutions (if applicable)
+- RTO agents and service partners
 
-5. Third-Party Services
+We do not sell your personal data to unauthorized third parties.
 
-Our platform uses third-party services including Firebase (authentication), Cloudflare (content delivery and image storage), and analytics tools. These services have their own privacy policies governing how they handle your data.
+5. Data Security
 
-6. Data Retention
+We implement reasonable security measures to protect your data, including:
+- Secure servers
+- Restricted data access
+- Regular monitoring
 
-We retain your personal information only for as long as necessary to fulfil the purposes outlined in this policy, or as required by law. You may request deletion of your data at any time by contacting us.
+However, no method of transmission over the internet is 100% secure.
 
-7. Your Rights
+6. Your Rights
 
-- Access: You can request a copy of your personal data we hold
-- Correction: You can request correction of inaccurate data
-- Deletion: You can request deletion of your personal data
-- Opt-out: You can unsubscribe from marketing communications at any time
+You have the right to:
+- Request access to your data
+- Request correction of incorrect data
+- Request deletion of your data
+- Opt out of marketing communications
 
-8. Children's Privacy
+To exercise these rights, contact us using the details below.
 
-Our platform is not intended for individuals under 18 years of age. We do not knowingly collect personal information from children.
+7. Third-Party Links
 
-9. Changes to This Policy
+Our website may contain links to third-party websites or services. We are not responsible for their privacy practices or content.
 
-We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated "Last Updated" date.
+8. Retention of Data
 
-10. Contact Us
+We retain your information only for as long as necessary to:
+- Fulfill the purposes outlined in this policy
+- Comply with legal obligations
+- Resolve disputes
 
-If you have any questions about this Privacy Policy, contact us at:
+9. Policy Updates
+
+We may update this Privacy Policy from time to time. Changes will be posted on this page with an updated effective date.
+
+10. Legal Compliance
+
+This Privacy Policy complies with applicable Indian laws, including:
+- Information Technology Act, 2000
+- Digital Personal Data Protection Act, 2023
+
+11. Contact Us
+
+For any questions, concerns, or requests regarding this Privacy Policy, please contact:
+
+GaadiBroker
 Email: hello@gaadibroker.com
 Phone: +91 8108797000
-Address: Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai 400706`;
+Address: Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai 400706
+
+—
+
+GaadiBroker is a platform that facilitates connections between buyers and sellers and does not take ownership of listed vehicles.`;
 
 export default function PrivacyPage() {
   const [content, setContent] = useState(defaultContent);
@@ -76,7 +136,7 @@ export default function PrivacyPage() {
       <div className="bg-white border-b border-slate-100">
         <div className="max-w-4xl mx-auto px-4 md:px-6 py-6">
           <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">Privacy Policy</h1>
-          <p className="text-sm text-slate-500 mt-1">Last Updated: April 8, 2026</p>
+          <p className="text-sm text-slate-500 mt-1">Last Updated: May 30, 2026</p>
         </div>
       </div>
       <div className="max-w-4xl mx-auto px-4 md:px-6 py-8">
