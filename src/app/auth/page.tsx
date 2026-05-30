@@ -8,6 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export default function AuthPage() {
   const router = useRouter();
   const { user, loading, sendOTP, verifyOTP, otpSent, otpError, setOtpError } = useAuth();
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [sending, setSending] = useState(false);
@@ -27,6 +28,10 @@ export default function AuthPage() {
   }
 
   const handleSendOTP = async () => {
+    if (name.trim().length < 2) {
+      setOtpError("Please enter your full name");
+      return;
+    }
     if (phone.length !== 10) {
       setOtpError("Please enter a valid 10-digit mobile number");
       return;
@@ -46,6 +51,13 @@ export default function AuthPage() {
     setVerifying(true);
     try {
       await verifyOTP(otp);
+      try {
+        const { auth } = await import("@/lib/firebase");
+        const { updateProfile } = await import("firebase/auth");
+        if (auth.currentUser && name.trim()) {
+          await updateProfile(auth.currentUser, { displayName: name.trim() });
+        }
+      } catch { /* non-blocking */ }
       router.push("/");
     } catch { /* error handled in context */ }
     setVerifying(false);
@@ -95,6 +107,23 @@ export default function AuthPage() {
                   ))}
                 </div>
 
+                {/* Name Input */}
+                <div className="mb-4">
+                  <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Full Name</label>
+                  <input
+                    type="text"
+                    maxLength={60}
+                    placeholder="Enter your full name"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setOtpError("");
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && handleSendOTP()}
+                    className="w-full px-4 py-3.5 text-sm outline-none bg-white text-slate-900 placeholder:text-slate-400 border-2 border-slate-200 rounded-xl focus:border-orange-400 transition-colors"
+                  />
+                </div>
+
                 {/* Phone Input */}
                 <div className="mb-4">
                   <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-2">Mobile Number</label>
@@ -117,7 +146,7 @@ export default function AuthPage() {
 
                 <button
                   onClick={handleSendOTP}
-                  disabled={sending || phone.length !== 10}
+                  disabled={sending || phone.length !== 10 || name.trim().length < 2}
                   className="w-full px-6 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl font-semibold text-sm hover:from-orange-600 hover:to-orange-700 transition-all disabled:opacity-50 shadow-md shadow-orange-200"
                 >
                   {sending ? (
