@@ -123,7 +123,7 @@ const defaultContent: SiteContent = {
   bannerImage: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1920",
   sliderImages: [],
   aboutText: "GaadiBroker is India's leading pre-owned car marketplace.",
-  contactEmail: "hello@gaadibroker.com",
+  contactEmail: "vmmotorhub@gmail.com",
   contactPhone: "+91 8108797000",
   contactAddress: "Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai, Maharashtra 400706",
   whatsappNumber: "918108797000",

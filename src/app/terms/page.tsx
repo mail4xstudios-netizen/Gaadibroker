@@ -66,7 +66,7 @@ These terms are governed by the laws of India. Any disputes shall be subject to 
 14. Contact Us
 
 If you have any questions about these Terms & Conditions, contact us at:
-Email: hello@gaadibroker.com
+Email: vmmotorhub@gmail.com
 Phone: +91 8108797000
 Address: Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai 400706`;
 

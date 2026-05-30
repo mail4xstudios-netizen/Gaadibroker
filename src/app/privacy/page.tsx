@@ -111,7 +111,7 @@ This Privacy Policy complies with applicable Indian laws, including:
 For any questions, concerns, or requests regarding this Privacy Policy, please contact:
 
 GaadiBroker
-Email: hello@gaadibroker.com
+Email: vmmotorhub@gmail.com
 Phone: +91 8108797000
 Address: Shop 48, Shreeji Heights, Sector-46/A, Seawoods, Navi Mumbai 400706
 
