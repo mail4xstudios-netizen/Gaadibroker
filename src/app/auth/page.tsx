@@ -54,8 +54,19 @@ export default function AuthPage() {
       try {
         const { auth } = await import("@/lib/firebase");
         const { updateProfile } = await import("firebase/auth");
-        if (auth.currentUser && name.trim()) {
-          await updateProfile(auth.currentUser, { displayName: name.trim() });
+        if (auth.currentUser) {
+          if (name.trim()) {
+            await updateProfile(auth.currentUser, { displayName: name.trim() });
+          }
+          const idToken = await auth.currentUser.getIdToken();
+          await fetch("/api/users/sync", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${idToken}`,
+            },
+            body: JSON.stringify({ name: name.trim() }),
+          }).catch(() => {});
         }
       } catch { /* non-blocking */ }
       router.push("/");
